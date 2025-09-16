@@ -1,0 +1,461 @@
+{% if current_user.admin == 1 %}
+{% extends "base.html" %}
+{% block title %}{{ current_user.name }}{% endblock %}
+{% block content %}
+    <body>
+      <header>
+        <nav id="login_navbar" class="navbar">
+          <h1 class="webpage_title">TravelBuds</h1>
+        </nav>
+      </header>
+
+      <div id="admin_page_content" class="container-fluid">
+
+        <!-- Modale per MEX FLASH -->
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          <!-- Bottone nascosto che attiva il modale automaticamente -->
+          <button type="button" id="flashModalTrigger" class="d-none" data-bs-toggle="modal" data-bs-target="#flashModal"></button>
+
+          <div class="modal fade" id="flashModal" tabindex="-1" role="dialog" aria-labelledby="flashModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+                  </button>
+                </div>
+                <div class="modal-body">
+                  {% for message in messages %}
+                    <p>{{ message }}</p>
+                  {% endfor %}
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Chiudi</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Script che simula il click sul bottone nascosto -->
+          <script>
+            document.addEventListener("DOMContentLoaded", function () {
+              document.getElementById("flashModalTrigger").click();
+            });
+          </script>
+        {% endif %}
+      {% endwith %}
+
+        <div id="home_box">
+          <div id="admin_box">
+            <img id="admin_img" src="{{ current_user.gender }}" alt="admin_img">
+            <h3 id="admin_name">Ciao {{ current_user.name }}</h3>
+          </div>
+          <p id="lo_p"><a id="logout_btn" class="link-offset-2 link-underline link-underline-opacity-0"
+             href="{{ url_for('logout') }}">Logout</a></p>
+        </div>
+        <ul class="nav nav-pills mb-3" id="mytrips_pills_tab" role="tablist">
+          <!--BOZZE-->
+          <li id="mytrips_section" class="nav-item" role="presentation"><button
+              class="nav-link active" id="pills-draft-tab" data-bs-toggle="pill"
+              data-bs-target="#pills-draft" type="button" role="tab" aria-controls="pills-draft"
+              aria-selected="true">Bozze</button>
+          </li>
+
+          <!--PUBBLICATI-->
+          <li id="public_section" class="nav-item" role="presentation"><button
+            class="nav-link" id="pills-public-tab" data-bs-toggle="pill"
+            data-bs-target="#pills-public" type="button" role="tab"
+            aria-controls="pills-public" aria-selected="false">Pubblicati</button>
+          </li>
+
+          <!--DOMANDE-->
+          <li id="myquests_section" class="nav-item" role="presentation"><button
+            class="nav-link" id="pills-quest-tab" data-bs-toggle="pill"
+            data-bs-target="#pills-quest" type="button" role="tab"
+            aria-controls="pills-quest" aria-selected="false">Domande</button>
+          </li>
+
+        </ul>
+
+        <!--CONTENUTI-->
+        <div class="tab-content" id="pills-tabContent">
+
+          <!--NUOVO VIAGGIO e BOZZE-->
+          <div class="tab-pane fade show active" id="pills-draft" role="tabpanel"
+              aria-labelledby="pills-draft-tab" tabindex="0">
+            <button id="new_btn" type="button" class="btn"
+              data-bs-toggle="modal" data-bs-target="#newModal">Nuovo viaggio</button>
+
+             <!--Modale per NUOVO VIAGGIO-->
+            <div class="modal fade" id="newModal" tabindex="-1" aria-labelledby="newModalLabel" aria-hidden="true">
+              <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="new_title">Crea un nuovo viaggio</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                      aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <form id="new_form" action="/newtrip_validation" method="POST" enctype="multipart/form-data">
+                      <div id="new_form_header" class="mb-3">
+
+                        <input id="destination_new" name="destination" class="form-control"
+                          type="text" placeholder="Destinazione" required>
+
+                          <div id="dates_new">
+                            <div id="start_new">
+                              <label for="start_label" class="form-label">Partenza</label>
+                              <input id="start_input" name="start" class="form-control" type="date" required>
+                            </div>
+
+                            <div id="end_new">
+                              <label for="end_label" class="form-label">Ritorno</label>
+                              <input id="end_input" name="end" class="form-control" type="date" required>
+                            </div>
+                          </div>
+
+                        <input id="seats_new" name="seats" class="form-control" type="number"
+                          placeholder="Numero di posti" min="1" required>
+
+                        <textarea id="description_new" name="description" class="form-control"
+                          rows="3" placeholder="Presentazione del viaggio"></textarea>
+
+                        <div id="price_new">
+                          <label for="transp_price_new" class="form-label">Prezzo trasporti</label>
+                          <input id="transp_price_new" name="transport_price" class="form-control" type="number" min="0">
+                          <label for="stay_price_new" class="form-label">Prezzo alloggio</label>
+                          <input id="stay_price_new" name="stay_price" class="form-control" type="number" min="0">
+                          <label for="act_price_new" class="form-label">Prezzo attivit&agrave;</label>
+                          <input id="act_price_new" name="act_price" class="form-control" type="number" min="0">
+                        </div>
+
+                        <input id="subtitle_new" name="subtitle" class="form-control"
+                          type="text" placeholder="Sottotitolo">
+
+                        <input id="total_price_new" name="price" class="form-control" type="number"
+                        placeholder="Prezzo totale" min="0">
+
+                        <textarea id="tour_new" name="tour" class="form-control"
+                          rows="3" placeholder="Itinerario delle giornate"></textarea>
+
+                        <input type="hidden" name="public" value="0">
+                        <input type="hidden" name="free_seats" value="0">
+
+                        <div id="imgs_input">
+                          <label for="card_img" class="form-label">Foto di presentazione</label>
+                          <input type="file" id="card_img" name="card_img" class="form-control">
+
+                          <label for="bg_img" class="form-label">Foto di sfondo</label>
+                          <input type="file" id="bg_img" name="bg_img" class="form-control">
+                        </div>
+                        <br>
+                        <input type="hidden" name="nights" value="0">
+                        <input type="hidden" name="a_username" value="{{ current_user.username }}">
+
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                          <button id="submit_save_btn" type="submit" class="btn btn-primary" name="action" value="save">Salva</button>
+                        </div>
+
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <section id="mytrips" class="alert" role="alert">
+              <div id="mytrips_cards">
+
+                {% for d in d_trips %}
+                <div id="draft_trip" class="card">
+                  <img src="{{ d.card_img }}" class="draft_img" alt="{{ d.destination }}">
+                  <div class="draft_card_body">
+                    <h4 class="draft_card_title">{{ d.destination }}</h4>
+                    <button id="modify_btn" type="button" class="btn"
+                    data-bs-toggle="modal" data-bs-target="#modifyModal{{ d.tripcode }}">Modifica</button>
+                    <button id="delete_btn" type="button" class="btn"
+                    data-bs-toggle="modal" data-bs-target="#deleteModal{{ d.tripcode }}">Elimina</button>
+                  </div>
+
+
+                  <!--modale per la MODIFICA-->
+                  <div class="modal fade" id="modifyModal{{ d.tripcode }}" tabindex="-1"
+                       aria-labelledby="modifyModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h1 class="modal-title fs-5" id="draft_title">{{ d.destination }}</h1>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal"
+                              aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                          <form id="draft_form" action="/draft_validation" method="POST" enctype="multipart/form-data">
+
+                            <div id="draft_form_header" class="mb-3">
+
+                              <label for="destination" class="form-label">Destinazione : </label>
+                              <input id="destination_draft" name="destination" type="text"
+                                  value="{{ d.destination }}" required><br>
+
+                              <div id="dates_new">
+                                <div id="start_new">
+                                  <label for="start" class="form-label">Partenza</label><br>
+                                  <input id="start_input" name="start" type="date"
+                                    value="{{ d.start.split('/')[2] ~ '-' ~ d.start.split('/')[1] ~ '-' ~ d.start.split('/')[0] if d.start else '' }}" required><br>
+                                </div>
+
+                                <div id="end_new">
+                                  <label for="end" class="form-label">Ritorno</label><br>
+                                  <input id="end_input" name="end" type="date"
+                                    value="{{ d.end.split('/')[2] ~ '-' ~ d.end.split('/')[1] ~ '-' ~ d.end.split('/')[0] if d.end else '' }}" required><br>
+                                </div>
+                              </div><br>
+
+                              <div>
+                                <label for="seats" class="form-label">Numero di posti : </label>
+                                <input id="seats_input" name="seats" type="number"
+                                  value="{{ d.seats }}" min="1" required><br>
+                              </div>
+
+                              <div>
+                                <label for="subtitle" class="form-label">Sottotitolo : </label>
+                                <input id="subtitle_draft" name="subtitle" type="text"
+                                  value="{{ d.subtitle if d.subtitle else '' }}"><br>
+                              </div>
+
+                              <label for="description" class="form-label">Descrizione : </label><br>
+                              <textarea id="description_draft" name="description" rows="4"
+                              cols="76">{{ d.description if d.description else '' }}</textarea><br>
+
+                              <label for="tour" class="form-label">Itinerario : </label><br>
+                              <textarea id="tour_draft" name="tour" rows="4"
+                              cols="76">{{ d.tour if d.tour else '' }}</textarea><br>
+
+                              <div id="price_new">
+                                <div>
+                                  <label for="price" class="form-label">Prezzo totale</label><br>
+                                  <input id="price_input" name="price" type="number"
+                                    value="{{ d.price if d.price else '' }}" min="0"><br>
+                                </div>
+                                <div>
+                                  <label for="stay_price" class="form-label">Prezzo alloggio</label><br>
+                                  <input id="stay_price_new" name="stay_price" type="number"
+                                    value="{{ d.stay_price if d.stay_price else '' }}" min="0"><br>
+                                </div>
+                                <div>
+                                  <label for="transport_price" class="form-label">Prezzo trasporto</label><br>
+                                  <input id="transport_price_new" name="transport_price" type="number"
+                                    value="{{ d.transport_price if d.transport_price else '' }}" min="0"><br>
+                                </div>
+                                <div>
+                                  <label for="act_price" class="form-label">Prezzo attivit&agrave;</label><br>
+                                  <input id="act_price_new" name="act_price" type="number"
+                                  value="{{ d.act_price if d.act_price else '' }}" min="0"><br>
+                                </div>
+                              </div>
+
+                              {% if not d.card_img %}
+                                <label for="imgInput" class="form-label">Foto di presentazione</label>
+                                <input type="file" id="imgInput" name="card_img" class="form-control"><br>
+                              {% else %}
+                                <input type="hidden" name="card_img" value="{{ d.card_img }}">
+                              {% endif %}
+                              {% if not d.bg_img %}
+                                <label for="imgInput" class="form-label">Foto di sfondo</label>
+                                <input type="file" id="imgInput" name="bg_img" class="form-control"><br>
+                              {% else %}
+                                <input type="hidden" name="bg_img" value="{{ d.bg_img }}">
+                              {% endif %}
+
+                              <input type="hidden" name="tripcode" value="{{ d.tripcode }}">
+                              <input type="hidden" name="a_username" value="{{ current_user.username }}">
+
+                              <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+	 	                            <button id="submit_post_btn" type="submit" class="btn btn-primary" name="action" value="post">Pubblica</button>
+                                <button id="submit_save_btn" type="submit" class="btn btn-primary" name="action" value="save">Salva</button>
+                              </div>
+
+                            </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!--modale per ELIMINAZIONE-->
+                  <div class="modal fade" id="deleteModal{{ d.tripcode }}" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h1 class="modal-title fs-5" id="draft_title">Vuoi eliminare il
+                              viaggio per {{d.destination}}?</h1>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal"
+                              aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                          <form id="delete_form" action="/delete_validation" method="POST">
+
+                            <p>Questa azione è irreversibile.</p>
+
+                            <input type="hidden" name="username" value="{{ current_user.username }}">
+                            <input type="hidden" name="tripcode" value="{{ d.tripcode }}">
+
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+	 	                          <button id="submit_delete_btn" type="submit" class="btn btn-primary">Conferma</button>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                {% endfor %}
+              </div>
+            </section>
+          </div>
+
+          <!--PUBBLICATI-->
+          <div class="tab-pane fade" id="pills-public" role="tabpanel"
+               aria-labelledby="pills-public-tab" tabindex="0">
+
+            <section id="mytrips" class="alert" role="alert">
+
+
+              <div id="mytrips_cards">
+                {% for p in p_trips %}
+                <div id="public_trip" class="card">
+                  <img src="{{p.card_img}}" class="public_img" alt="{{p.destination}}">
+                  <div class="public_card_body">
+                    <h4 class="public_card_title">{{p.destination}}</h4>
+                    <button id="read_btn" type="button" class="btn"
+                    data-bs-toggle="modal" data-bs-target="#readModal{{p.tripcode}}">Visualizza</button>
+                  </div>
+
+                  <!--modale per la VISUALIZZAZIONE VIAGGIO-->
+                  <div class="modal fade" id="readModal{{p.tripcode}}" tabindex="-1"
+                    aria-labelledby="readModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h1 class="modal-title fs-5" id="public_title">{{p.destination}}</h1>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal"
+                              aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+
+                          <p>Destinazione: {{ p.destination }}, {{ p.subtitle }}</p><br>
+                          <p>Partenza: {{ p.start }}</p><br>
+                          <p>Ritorno: {{ p.end }}</p><br>
+                          <p>Posti prenotati: {{ p.seats - p.free_seats }}</p><br>
+                          <p>Elenco partecipanti:</p>
+                          <ul>
+                            {% for username in p.participants %}
+                              <li>{{ username }}</li>
+                            {% endfor %}
+                          </ul><br>
+                          <p>Descrizione: {{ p.description }}</p><br>
+                          <p>Itinerario: {{ p.tour }}</p><br>
+                          <p>Prezzo: {{ p.price }}€</p><br>
+                          <p>Alloggio: {{ p.stay_price }}€</p><br>
+                          <p>Trasporti: {{ p.transport_price }}€</p><br>
+                          <p>Attivit&agrave;: {{ p.act_price }}€</p><br>
+
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                {% endfor %}
+              </div>
+
+            </section>
+          </div>
+
+          <!--DOMANDE-->
+          <div class="tab-pane fade" id="pills-quest" role="tabpanel"
+              aria-labelledby="pills-quest-tab" tabindex="0">
+
+            <div id="quest_cards">
+
+              {% for q in quests %}
+              <div id="quest_trip" class="card">
+                <div class="quest_card_body">
+                  <div class="accordion accordion-flush" id="accordion_messages">
+                    <div class="accordion-item">
+                      <h2 id="accordion_title" class="accordion-header">
+                        <button class="accordion-button collapsed" type="button"
+                            data-bs-toggle="collapse" data-bs-target="#flush-collapse-{{ loop.index }}"
+                            aria-expanded="false" aria-controls="flush-collapse-{{ loop.index }}">
+                            Chat con {{q.u_username}} (<strong>{{q.destination}}</strong>)
+                        </button>
+                      </h2>
+                      <div id="flush-collapse-{{ loop.index }}" class="accordion-collapse collapse"
+                            data-bs-parent="#accordionFlushExample">
+                        <div class="accordion-body">
+                          <p><strong>La domanda di {{q.u_username}}:</strong></p>
+                          <p class="ms-3">{{ q.quest }}</p>
+                          <div id="mex_card_btn">
+                            <button id="answer_btn" type="button"
+                              class="btn" data-bs-toggle="modal"
+                              data-bs-target="#answerModal">Rispondi</button>
+                          </div>
+
+                          <!--modale per RISPONDERE-->
+                          <div class="modal fade" id="answerModal" tabindex="-1"
+                            aria-labelledby="answerModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <h1 class="modal-title fs-5" id="answer_title">
+                                      Risposta a {{q.u_username}}</h1>
+                                  <button type="button" class="btn-close"
+                                        data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                  <form id="answer_form" action="/admin_answer_validation" method="POST">
+                                    <div id="answer_form_header" class="mb-3">
+
+                                      <p>{{q.quest}}</p>
+                                      <textarea id="admin_answer" name="answer" class="form-control mb-3" rows="3"
+                                          placeholder="La tua risposta"></textarea>
+                                      <input type="hidden" name="questid" value="{{q.questid}}">
+                                      <input type="hidden" name="username" value="{{current_user.username}}">
+
+                                      <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                        <button id="submit_answer_btn" type="submit" class="btn btn-primary">
+                                          Rispondi
+                                        </button>
+                                      </div>
+                                    </div>
+                                  </form>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+          crossorigin="anonymous"></script>
+      <footer>
+      </footer>
+    </body>
+{% endblock %}
+{% else %}
+  <p>Accesso negato.</p>
+{% endif %}

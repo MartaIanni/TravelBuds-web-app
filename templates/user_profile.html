@@ -1,0 +1,120 @@
+{% if current_user.admin == 0 %}
+{% extends "base.html" %}
+{% block title %}{{ current_user.name }}{% endblock %}
+{% block content %}
+    <body>
+      <header>
+        <nav id="login_navbar" class="navbar">
+          <h1 class="webpage_title">TravelBuds</h1>
+        </nav>
+      </header>
+
+
+      <div id="home_box">
+        <div id="user_box">
+          <img id="user_img" src="{{ user.gender }}" alt="user_img">
+          <h3 id="user_name">Ciao {{ current_user.name }}!</h3>
+        </div>
+        <div id="home_box_btns">
+          <p><a id="home_btn" class="link-offset-2 link-underline link-underline-opacity-0"
+            href="{{ url_for('user_home', username=current_user.username) }}">Home</a></p>
+          <p><a id="logout_btn" class="link-offset-2 link-underline link-underline-opacity-0"
+            href="{{ url_for('logout') }}">Logout</a></p>
+        </div>
+      </div>
+
+
+      <ul class="nav nav-pills mb-3" id="mytrips_pills_tab" role="tablist">
+        <li id="mytrips_section" class="nav-item" role="presentation">
+          <button class="nav-link active" id="pills-mytrips-tab" data-bs-toggle="pill"
+          data-bs-target="#pills-mytrips" type="button" role="tab" aria-controls="pills-mytrips"
+          aria-selected="true">I miei viaggi</button>
+        </li>
+
+        <li id="myquests_section" class="nav-item" role="presentation">
+          <button class="nav-link" id="pills-myquests-tab" data-bs-toggle="pill"
+          data-bs-target="#pills-myquests" type="button" role="tab"
+          aria-controls="pills-myquests" aria-selected="false">Le mie domande</button>
+        </li>
+
+      </ul>
+
+      <div class="tab-content" id="mytrips_pills_tabContent">
+
+        <div class="tab-pane fade show active" id="pills-mytrips" role="tabpanel"
+             aria-labelledby="pills-mytrips-tab" tabindex="0">
+
+          <section id="mytrips" class="alert" role="alert">
+            <div id="mytrips_cards">
+
+              {% for trip in b_trips %}
+              <div id="mytrip_card" class="card">
+                <img src="{{ trip.card_img }}" class="mytrips_img" alt="{{ trip.destination }}">
+                <div class="mytrip_card_body">
+                  <h4 class="mytrip_card_title">{{ trip.destination }}</h4>
+                  <a href="{{ url_for('trip', id=trip.tripcode, username=current_user.username) }}">
+                    <button id="trip_btn" type="button" class="btn bg-danger-subtle">Visualizza</button>
+                  </a>
+                </div>
+              </div>
+              {% endfor %}
+
+            </div>
+          </section>
+
+        </div>
+
+        <!--Contenuto Le miei domande-->
+
+        <div class="tab-pane fade" id="pills-myquests" role="tabpanel"
+             aria-labelledby="pills-myquests-tab" tabindex="0">
+
+          <div id="quest_cards">
+            {% for q in quests %}
+            <!--for per inserire tutte le risposte se presenti -->
+            <div id="quest_trip" class="card">
+                <div class="quest_card_body">
+                  <div class="accordion accordion-flush" id="accordion_messages">
+
+                    <div class="accordion-item">
+                      <h2 id="accordion_title" class="accordion-header">
+                        <button class="accordion-button collapsed" type="button"
+                            data-bs-toggle="collapse" data-bs-target="#flush-collapse-{{ loop.index }}"
+                            aria-expanded="false" aria-controls="flush-collapse-{{ loop.index }}">
+                            Chat con {{ q.a_username }} (<strong>{{ q.destination }}</strong>)
+                        </button>
+                      </h2>
+                      <div id="flush-collapse-{{ loop.index }}" class="accordion-collapse collapse"
+                        data-bs-parent="#accordionFlushExample">
+                        <div class="accordion-body">
+
+                          <p><strong>La tua domanda</strong></p>
+                          <p class="ms-3">{{ q.quest }}</p>
+                          {% if q.answer %}
+                            <p><strong>Risposta di {{q.a_username}}:</strong></p>
+                            <p class="ms-3">{{ q.answer }}</p>
+                          {% else %}
+                            <p></p>  <!-- Puoi anche mostrare un messaggio personalizzato -->
+                          {% endif %}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+          crossorigin="anonymous"></script>
+      <footer >
+      </footer>
+    </body>
+{% endblock %}
+{% else %}
+  <p>Accesso negato.</p>
+{% endif %}

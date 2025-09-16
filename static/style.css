@@ -1,0 +1,850 @@
+/*Login*/
+
+#login_body{
+    font-family: 'Courier New', Courier, monospace;
+    min-height: 100vh;
+    background-image: url('/static/login_bg.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed; /* Blocca lo sfondo mentre l'utente scorre */
+}
+
+#login_navbar{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #0c692a;
+    color: darkseagreen;
+    font-family: 'Courier New', Courier, monospace;
+    height: 6rem;
+    margin: 0rem;
+}
+
+.webpage_title{
+    font-weight: bold;
+    font-size: 65px;
+    padding: 0rem;
+    margin: 0rem;
+}
+
+#descr_navbar{
+    text-align: center;
+    margin: 0rem;
+    padding: 0rem;
+}
+
+#nav_d{
+    margin: 0rem;
+    padding-top: 0.3rem;
+    padding-bottom: 0.3rem;
+    background-color: rgba(219, 222, 227, 0.747);
+    font-size: 22px;
+    font-weight: bold;
+    color: rgb(12, 90, 91);
+}
+
+#login_box{
+    margin-top: 3.5rem;
+    margin-left: 7rem;
+    width: 30rem;
+    background-color: white;
+}
+
+#login_input{
+    padding: 0.5rem 4rem 0rem 4rem;
+    width: 100%;
+}
+
+#user_name_login{
+    margin-bottom: 0.5rem;
+}
+
+#login_btn_box{
+    display: flex;
+    justify-content: center;
+}
+
+#login_btn{
+    margin-top: 0.8rem;
+    width: 7rem;
+    border-color: burlywood;
+    color: rgb(250, 250, 250);
+    font-size: 130%;
+    font-weight: bold;
+    text-align: center;
+}
+
+#signup_box{
+    text-align: center;
+}
+
+#signup_box_label{
+    font-size: 90%;
+}
+
+#signup_box_btn{
+    margin-bottom: 1rem;
+    width: 7rem;
+    border-color: burlywood;
+    background-color: #fa9f5a80;
+    color: rgb(159, 68, 68);
+    font-weight: bold;
+}
+
+#birth_gender_box{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 0.5rem 5.5rem 1rem 4rem;
+}
+
+#gender_signup{
+    margin-top: 0.7rem;
+}
+
+#birthdate_signup_input{
+    width: 130px;
+    margin-left: 0.4rem;
+}
+
+footer{
+    margin: 0.7rem;
+}
+
+/*AdminHome*/
+
+#admin_img, #user_img {
+    width: 80px;
+    border-radius: 50%;
+}
+
+#notif_btn{
+    height: fit-content;
+    margin: 1.5rem 1rem 0rem 53rem;
+}
+
+#trips_box{
+    display: flex;
+    flex-direction: row;
+    padding: 3rem 0rem 0rem 3rem;
+}
+
+#draft_cards, #public_cards{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 1rem;
+}
+
+#draft_trip, #public_trip, #mytrip_card {
+    position: relative;
+    width: 22rem;
+    height: 13rem;
+    padding: 0rem;
+}
+
+#quest_trip{
+    width: 73rem;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.draft_card_body, .public_card_body, .mytrip_card_body {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    width: 100%;
+    height: 100%;
+    color: white;
+    background: rgba(0, 0, 0, 0.115);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    padding: 10px;
+}
+
+.draft_img, .public_img, .mytrips_img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Adatta l'immagine al contenitore */
+    position: absolute;
+    z-index: 1;
+}
+
+.draft_card_title, .public_card_title, .mytrip_card_title {
+    font-size: 1.8rem;
+    font-weight: bold;
+    margin: 0;
+}
+
+#modify_btn {
+    font-family: 'Courier New', Courier, monospace;
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    background-color: rgba(110, 155, 110, 0.816);
+    padding: 5px 10px;
+    border-radius: 5px;
+    margin: 0;
+    z-index: 3;
+}
+
+#read_btn, #trip_btn, #delete_btn, #answer_btn {
+    font-size: 1.1rem;
+    font-weight: bold;
+    background-color: rgba(110, 155, 110, 0.816);
+    font-family: 'Courier New', Courier, monospace;
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    padding: 5px 10px;
+    border-radius: 5px;
+    margin: 0;
+    z-index: 3;
+}
+
+#new_btn{
+    font-size: 1.1rem;
+    background-color: rgba(220, 20, 60, 0.597);
+    color: rgb(0, 0, 0);
+    font-family: 'Courier New', Courier, monospace;
+    position: absolute;
+    top: 13.5rem;
+    right: 2rem;
+    padding: 5px 10px;
+    border-radius: 5px;
+    margin: 0;
+    z-index: 3;
+}
+
+.form-control{
+    margin-top: 0.5rem;
+}
+
+#dates_new{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    text-align: center;
+    justify-content: space-around;
+}
+
+#price_new{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    text-align: center;
+    justify-content: space-around;
+}
+
+#stay_price_new, #transp_price_new, #act_price_new, #price_input{
+    width: 8rem;
+}
+
+#imgs_input{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.form-label{
+    padding-top: 0.7rem;
+}
+
+#seats_btn{
+    position: absolute;
+    width: 10rem;
+    bottom: 0px;
+    font-size: 1rem;
+    padding: 5px 10px;
+    z-index: 3;
+}
+
+#bud_list {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    font-size: 1rem;
+    padding: 5px 10px;
+    border-radius: 5px;
+    margin: 0;
+    z-index: 3;
+}
+
+/*Messages*/
+
+#mex_cards{
+    margin-top: 1rem;
+}
+
+#mex_card_btn{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+#mex_card_btn{
+    margin-left: 65rem;
+    margin-bottom: 1rem;
+}
+
+.accordion-button.collapsed {
+    background-color: rgba(143, 188, 143, 0.483);
+    color: #0c692a;
+}
+
+.accordion-button:not(.collapsed) {
+    background-color: #0c692a;
+    color: white;
+}
+
+.accordion-button.collapsed:hover {
+    background-color: #0c692a;
+    color: white;
+}
+
+/*UserHome*/
+
+#user_h_body{
+    background-color: rgb(216, 204, 214);
+}
+
+#admin_page_content{
+    padding: 0rem;
+}
+
+#home_box {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    font-family: 'Courier New', Courier, monospace;
+    background-color: darkseagreen;
+}
+
+#admin_box, #user_box{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.7rem;
+    width: 25rem;
+}
+
+#admin_name, #user_name{
+    font-weight: bold;
+    padding-top: 0.3rem;
+}
+
+#home_sub{
+    font-weight: bold;
+    padding: 0.8rem;
+    margin: 0rem;
+}
+
+#mt_p{
+    margin-top: 1rem;
+    margin-left: 14rem;
+}
+
+#user_page_content{
+    padding: 0rem;
+}
+
+#av_btns{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+    margin-left: 0.8rem;
+}
+
+#av_title{
+    text-align: center;
+}
+
+#available_cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 1rem;
+}
+
+.av_card_container {
+    position: relative;
+    display: block; /* blocco cliccabile */
+    width: 24.5rem;
+    height: 16.4rem;
+    border-radius: 5px;
+    overflow: hidden; /* Evita che il contenuto esca dai bordi */
+    text-decoration: none; /* Rimuove la sottolineatura dal link */
+}
+
+.av_img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Adatta l'immagine al contenitore */
+    position: absolute;
+    z-index: 1;
+}
+
+.av_card_body {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    width: 100%;
+    height: 100%;
+    color: white;
+    background: rgba(0, 0, 0, 0.115);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 10px;
+}
+
+.av_card_title {
+    font-size: 1.8rem;
+    font-weight: bold;
+    margin: 0;
+}
+
+.av_card_subtitle {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    font-size: 1rem;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 5px 10px;
+    border-radius: 5px;
+    margin: 0;
+    z-index: 3;
+}
+
+.av_card_info {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    font-size: 1rem;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 5px 10px;
+    border-radius: 5px;
+    margin: 0;
+    z-index: 3;
+}
+
+.av_card_container:hover .av_card_body {
+    background: rgba(0, 0, 0, 0.36);
+}
+
+/*Trip*/
+
+#trip_body {
+    font-family: 'Courier New', Courier, monospace;
+    background-color: rgba(231, 229, 236, 0.838);
+}
+
+#trip_title {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 2rem;
+    right: 8rem;
+    z-index: 3;
+}
+
+#title, #subtitle{
+    color: rgb(17, 31, 66);
+    font-weight: bold;
+    font-size: 40px;
+}
+
+#trip_img {
+    width: 100%;
+    height: 520px;
+    filter: brightness(1.1);
+    object-fit: cover;
+    max-height: 700px;
+}
+
+#trip_box{
+    margin: 0rem;
+    padding-top: 0.8rem;
+    display: flex;
+    justify-content: flex-end;
+    background-color: darkseagreen;
+}
+
+#trip_card{
+    position: absolute;
+    top: 6rem;
+    left: 7rem;
+    width: 20rem;
+    height: 20rem;
+    color: white;
+    background-color: rgba(17, 31, 66, 0.594);
+    padding: 11px 20px;
+    font-size: 1.5rem;
+    border-radius: 5px;
+}
+
+#trip_card_body{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 1.8rem;
+}
+
+#card_title{
+    font-weight: bold;
+}
+
+#trip_details_sign {
+    position: absolute;
+    top: 28rem;
+    left: 40%;
+    color: black;
+    font-size: 1.2rem;
+    font-weight: bold;
+    background-color: rgba(255, 255, 255, 0.674);
+    padding: 0.5rem 1rem;
+    border-radius: 10px;
+}
+
+#booking_btn{
+    background-color: #0c692a;
+    color: white;
+    font-weight: bold;
+}
+
+#trip_page_content{
+    padding: 0rem;
+}
+
+#trip_details {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 2.1rem 1rem 0rem 1rem;
+}
+
+
+#trip_description{
+    margin-left: 2rem;
+    width: 54rem;
+}
+
+#trip_included{
+    margin-right: 2rem;
+}
+
+#trip_description .card,
+#trip_included .card {
+    border-radius: 15px;
+    background-color: #f8f9fa;
+    color: #113f72;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    width: 100%;
+}
+
+#trip_description .card-title,
+#trip_included .card-title{
+    text-align: center;
+}
+
+#trip_description h4,
+#trip_included h4 {
+    color: #0c692a;
+    font-weight: bold;
+    margin-bottom: 1rem;
+}
+
+#questbox{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#day_list{
+    padding: 2rem;
+    margin: 0rem;
+}
+
+ul{
+    margin: 0rem;
+}
+
+#quest_btn {
+    background-color: #228d44ab;
+    color: white;
+}
+
+#quest_btn:hover{
+    background-color: #258f47;
+}
+
+#quest_form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+#quest_username,
+#quest_text {
+    width: 100%;
+    padding: 0.8rem;
+    border-radius: 5px;
+}
+
+#quest_text {
+    min-height: 100px;
+}
+
+#submit_quest_btn {
+    margin-top: 1rem;
+    background-color: #0c692a;
+    border: none;
+}
+
+#submit_quest_btn:hover {
+    background-color: #258f47;
+}
+
+html, body {
+    overflow-x: hidden; /* Blocca lo scorrimento orizzontale */
+    width: 100%; /* Evita elementi fuori dallo schermo */
+}
+
+/*UserProfile*/
+
+#home_box_btns{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    margin-top: 1rem;
+}
+
+#logout_btn, #home_btn, #my_trips_btn {
+    text-decoration: none;
+    color: #0c692a;
+    font-size: 1rem;
+    margin-right: 2rem;
+    padding: 0.2rem;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+#logout_btn:hover, #home_btn:hover, #my_trips_btn:hover {
+    background-color: rgba(255, 255, 255, 0.676);
+    color: #0c692a;
+}
+
+.nav-item{
+    font-family: 'Courier New', Courier, monospace;
+}
+
+#mytrips_pills_tab{
+    margin: 1rem;
+}
+
+#mytrips_section .nav-link.active, #myquests_section .nav-link.active, #public_section .nav-link.active {
+    background-color: #0c692a;
+    color: white;
+    border-radius: 5px;
+}
+
+#mytrips{
+    margin: 0.5rem;
+}
+
+#quest_cards{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 12.25rem;
+}
+
+#mytrips_cards {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 2rem;
+    padding: 0rem 0rem 0rem 3.5rem;
+}
+
+/*MEDIAQUERY*/
+
+@media screen and (max-width: 1200px) {
+    .webpage_title {
+        font-size: 60px;
+    }
+
+
+    #login_box {
+        margin-top: 6rem;
+    }
+
+
+    #descr_navbar{
+        display: none;
+    }
+
+    #quest_cards {
+        margin-left: 2rem;
+        margin-right: 2rem;
+    }
+    #home_sub{
+        display: none;
+    }
+
+    #home_box_btns{
+        width: 100%;
+    }
+
+    #subtitle{
+        display: none;
+    }
+
+    #trip_title {
+        align-items: center;
+        text-align: center;
+        right: 40%;
+        top: 2rem;
+    }
+    #trip_details_sign{
+        left: 40%;
+    }
+
+
+    #trip_description{
+        width: 60%;
+    }
+
+    #trip_included {
+        width: 50%;
+        margin-left: 4rem;
+    }
+}
+
+@media screen and (max-width: 800px) {
+    .webpage_title {
+        font-size: 55px;
+    }
+
+    #descr_navbar{
+        display: none;
+    }
+
+    #login_box {
+        width: 60%;
+    }
+
+    #quest_cards {
+        margin-left: 2rem;
+        margin-right: 2rem;
+    }
+
+    #home_box_btns{
+        width: 100%;
+    }
+
+    #subtitle{
+        display: none;
+    }
+
+    #trip_title {
+        align-items: center;
+        text-align: center;
+        right: 35%;
+        top: 2rem;
+    }
+
+    #trip_details_sign{
+        left: 26%;
+    }
+
+    #trip_details{
+        flex-direction: column;
+        display: block;
+        text-align: center;
+    }
+
+    #trip_description{
+        width: 88%;
+    }
+
+    #trip_included {
+        width: 50%;
+        margin-left: 8.5rem;
+    }
+
+}
+
+@media screen and (max-width: 480px) {
+    .webpage_title {
+        font-size: 1.8rem;
+    }
+
+    #descr_navbar{
+        display: none;
+    }
+
+    #login_box {
+        width: 80%;
+    }
+
+    #login_btn, #signup_box_btn {
+        font-size: 1rem;
+    }
+
+    #quest_cards {
+        margin-left: 2rem;
+        margin-right: 2rem;
+    }
+
+    #home_box_btns{
+        width: 100%;
+    }
+
+    #subtitle{
+        display: none;
+    }
+
+    #trip_title {
+        align-items: center;
+        text-align: center;
+        right: 35%;
+        top: 2rem;
+    }
+
+    #trip_details_sign{
+        left: 80%;
+    }
+
+    #trip_details {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    #trip_description{
+        width: 88%;
+    }
+
+    #trip_included {
+        margin-left: 0rem;
+    }
+}
+

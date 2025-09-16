@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+{% block title %}Login{% endblock %}
+{% block content %}
+    <body id="login_body">
+        <header>
+          <nav id="login_navbar" class="navbar">
+            <h1 class="webpage_title">TravelBuds</h1>
+          </nav>
+        </header>
+
+        <main id="login_content">
+
+          <!-- Modale per MEX FLASH -->
+          {% with messages = get_flashed_messages() %}
+            {% if messages %}
+              <button type="button" id="flashModalTrigger" class="d-none" data-bs-toggle="modal" data-bs-target="#flashModal"></button>
+
+              <div class="modal fade" id="flashModal" tabindex="-1" role="dialog" aria-labelledby="flashModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      {% for message in messages %}
+                        <p>{{ message }}</p>
+                      {% endfor %}
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Chiudi</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Script che simula il click sul bottone nascosto -->
+              <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                  document.getElementById("flashModalTrigger").click();
+                });
+              </script>
+            {% endif %}
+          {% endwith %}
+
+          <div id="descr_navbar">
+            <p id="nav_d">Vivi assieme a noi nuove avventure in giro per il mondo</p>
+          </div>
+
+          <section id="login_box" class="alert" role="alert">
+            <!-- Login -->
+            <form id="login_form" action="/user_login" method="POST">
+              <div id="login_input">
+                <input id="user_name_login" name="username" class="form-control" type="text"
+                  placeholder="Nome utente" required>
+                <input id="pwd_login" name="password" class="form-control" type="password"
+                  placeholder="Password" required>
+              </div>
+              <div id="login_btn_box" class="d-grid">
+                <button id="login_btn" type="submit" class="btn bg-danger">Accedi</button>
+              </div>
+            </form>
+
+            <hr class="border border-success border-1 opacity-70">
+
+            <!-- Iscrizione -->
+            <div id="signup_box">
+              <p id="signup_box_label">Parti con noi!</p>
+              <button id="signup_box_btn" type="button" class="btn"
+              data-bs-toggle="modal" data-bs-target="#signupModal">Iscriviti</button>
+            </div>
+
+          </section>
+            <!-- Modal -->
+          <div class="modal fade" id="signupModal" tabindex="-1" aria-labelledby="signupModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h1 class="modal-title fs-5" id="signup_title">Inizia con noi il tuo viaggio</h1>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>                  </div>
+                  <div class="modal-body">
+                    <form id="signup_form" action="/signup" method="POST">
+                      <div id="newrev_header" class="mb-3">
+                        <input name="name" class="form-control" type="text"
+                          placeholder="Nome" required></input>
+                        <input name="surname" class="form-control" type="text"
+                          placeholder="Cognome" required>
+                        <div id="birth_gender_box">
+                          <div id="birthdate_signup">
+                            <label for="birthdate" class="form-label">Data di nascita</label>
+                            <input id="birthdate" name="birthdate" class="form-control" type="date"
+                                required>
+                          </div>
+                          <div id="gender_signup">
+                            <label class="form-check-label" for="woman_check">Genere</label>
+                            <div class="form-check mt-1">
+                              <input class="form-check-input" type="radio" name="gender" id="woman_check" value="F" required>
+                              <label class="form-check-label" for="woman_check">Donna</label>
+                            </div>
+                            <div class="form-check">
+                              <input class="form-check-input" type="radio" name="gender" id="man_check" value="M">
+                              <label class="form-check-label" for="man_check">Uomo</label>
+                            </div>
+                          </div>
+                        </div>
+                        <input id="surname_signup" name="username" class="form-control" type="text"
+                          placeholder="Nome utente" required>
+                        <input id="surname_signup" name="password" class="form-control" type="password"
+                          placeholder="Password" required>
+                      </div>
+                      <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <button id="submit_signup_btn" type="submit" class="btn btn-primary btn-opacity-75-hover">Iscriviti</button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+            crossorigin="anonymous"></script>
+          <footer>
+          </footer>
+        </main>
+    </body>
+{% endblock %}
