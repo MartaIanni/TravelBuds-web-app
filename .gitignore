@@ -1,0 +1,11 @@
+#Python
+__pychache__/
+#Virtual environment
+venv/
+#IDE
+.vscode/
+# Environment variables
+.env
+
+# macOS files
+.DS_Store
