@@ -14,11 +14,9 @@ from datetime import datetime
 
 app = Flask(__name__)
 
-app.config['SECRET_KEY'] = 'qualsiasi valore'
+app.config['SECRET_KEY'] = 'travelbuds'
 login_manager = LoginManager()
 login_manager.init_app(app)
-
-app.config['SECRET_KEY'] = 'travelbuds'
 
 @app.route('/')
 def home():
@@ -34,7 +32,6 @@ def admin_home(username):
 
   for trip in p_trips:
      trip['participants'] = trips_dao.get_u_list(trip['tripcode'])
-     print(trip['participants'])
 
   return render_template('admin_home.html', p_trips=p_trips, d_trips=d_trips, quests=quests)
 
@@ -202,15 +199,15 @@ def del_trip():
     tripcode = request.form.get("tripcode")
     username = request.form.get("username")
 
-    if tripcode:
-      res = trips_dao.delete_trip(tripcode)
-      if res:
-          flash("Viaggio eliminato con successo!", "success")
-      else:
-          flash("Errore nell'eliminazione del viaggio.", "danger")
+    res = trips_dao.delete_trip(tripcode)
+    if res:
+        flash("Viaggio eliminato con successo!", "success")
+    else:
+        flash("Errore nell'eliminazione del viaggio.", "danger")
     return redirect(url_for('admin_home', username=username))
 
 @app.route('/booking', methods=['POST'])
+@login_required
 def booking():
   book_info = request.form.to_dict()
 
@@ -251,12 +248,13 @@ def booking():
 
   if (res == True) and (seats == True) :
     flash("Prenotazione completata con successo!")
-    return redirect(url_for('user_home', username=book_info['u_username']))
+  else:
+    flash('Ops qualcosa è andato storto! Riprova')
 
-  flash('Ops qualcosa è andato storto! Riprova')
   return redirect(url_for('user_home', username=book_info['u_username']))
 
 @app.route('/admin_answer_validation', methods=['POST'])
+@login_required
 def answer_validation():
     ans_info = request.form.to_dict()
 
@@ -265,7 +263,8 @@ def answer_validation():
 
     if success:
       flash("Risposta caricata!")
-      return redirect(url_for('admin_home', username=ans_info['username']))
+    else:
+      flash("Ci sono stati problemi nel caricamento della tua risposta! Riprova.")
 
     flash("Ci sono stati problemi nel caricamento della tua risposta! Riprova.")
     return redirect(url_for('admin_home', username=ans_info['username']))
