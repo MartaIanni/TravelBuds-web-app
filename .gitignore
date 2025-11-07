@@ -1,11 +1,16 @@
 #Python
 __pychache__/
-#Virtual environment
-venv/
+*.pyc
+
 #IDE
 .vscode/
-# Environment variables
+
+# Environment
 .env
+venv/
+
+# Database
+*.db
 
 # macOS files
 .DS_Store

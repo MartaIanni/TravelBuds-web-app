@@ -3,7 +3,7 @@ import sqlite3
 def get_trip(trip_id):
     query = 'SELECT * FROM trips WHERE tripcode = ?'
 
-    connection = sqlite3.connect('S345271_07-02-2025/db/travelbuds.db')
+    connection = sqlite3.connect('travelbuds.db')
     connection.row_factory = sqlite3.Row
     cursor = connection.cursor()
 
@@ -18,7 +18,7 @@ def get_trip(trip_id):
 
 def get_public_trips():
     query = 'SELECT * FROM trips WHERE public = 1'
-    connection = sqlite3.connect('S345271_07-02-2025/db/travelbuds.db')
+    connection = sqlite3.connect('travelbuds.db')
     connection.row_factory = sqlite3.Row
     cursor = connection.cursor()
 
@@ -33,7 +33,7 @@ def get_public_trips():
 
 def get_draft_trips(username):
     query = 'SELECT * FROM trips WHERE public = 0 AND a_username = ?'
-    connection = sqlite3.connect('S345271_07-02-2025/db/travelbuds.db')
+    connection = sqlite3.connect('travelbuds.db')
     connection.row_factory = sqlite3.Row
     cursor = connection.cursor()
 
@@ -48,7 +48,7 @@ def get_draft_trips(username):
 
 def get_mypublic_trips(username):
     query = 'SELECT * FROM trips WHERE public = 1 AND a_username = ?'
-    connection = sqlite3.connect('S345271_07-02-2025/db/travelbuds.db')
+    connection = sqlite3.connect('travelbuds.db')
     connection.row_factory = sqlite3.Row
     cursor = connection.cursor()
 
@@ -65,7 +65,7 @@ def get_mypublic_trips(username):
 def get_u_list(tripcode):
     query = 'SELECT u_username FROM bookings WHERE tripcode = ?'
 
-    connection = sqlite3.connect('S345271_07-02-2025/db/travelbuds.db')
+    connection = sqlite3.connect('travelbuds.db')
     connection.row_factory = sqlite3.Row
     cursor = connection.cursor()
 
@@ -83,7 +83,7 @@ def get_u_list(tripcode):
 def add_trip(trip):
     query = 'INSERT INTO trips(destination,start,end,seats,description,transport_price,stay_price,act_price,subtitle,price,tour,public,free_seats,card_img,bg_img,nights,a_username) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)'
 
-    connection = sqlite3.connect('S345271_07-02-2025/db/travelbuds.db')
+    connection = sqlite3.connect('travelbuds.db')
     connection.row_factory = sqlite3.Row
     cursor = connection.cursor()
 
@@ -113,7 +113,7 @@ def delete_trip(tripcode):
 
     query = 'DELETE FROM trips WHERE tripcode = ?'
 
-    connection = sqlite3.connect('S345271_07-02-2025/db/travelbuds.db')
+    connection = sqlite3.connect('travelbuds.db')
     connection.row_factory = sqlite3.Row
     cursor = connection.cursor()
 
@@ -131,7 +131,7 @@ def delete_trip(tripcode):
 
 
 def save_trip(drafttrip):
-    connection = sqlite3.connect('S345271_07-02-2025/db/travelbuds.db')
+    connection = sqlite3.connect('travelbuds.db')
     cursor = connection.cursor()
     connection.row_factory = sqlite3.Row
 
@@ -157,7 +157,7 @@ def save_trip(drafttrip):
         return False
 
 def public_trip(tripcode):
-    connection = sqlite3.connect('S345271_07-02-2025/db/travelbuds.db')
+    connection = sqlite3.connect('travelbuds.db')
     cursor = connection.cursor()
     connection.row_factory = sqlite3.Row
 
@@ -177,7 +177,7 @@ def public_trip(tripcode):
 
 def update_seats(tripcode,update):
     query = 'UPDATE trips SET free_seats = ? WHERE tripcode = ?'
-    connection = sqlite3.connect('S345271_07-02-2025/db/travelbuds.db')
+    connection = sqlite3.connect('travelbuds.db')
     connection.row_factory = sqlite3.Row
     cursor = connection.cursor()
 

@@ -12,9 +12,15 @@ import trips_dao, users_dao, quests_dao,bookings_dao
 from models import User
 from datetime import datetime
 
+#Import per env vars
+import os
+
 app = Flask(__name__)
 
-app.config['SECRET_KEY'] = 'travelbuds'
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
+#Verifica funzionamento env var SECRET_KEY:
+#print("SECRET_KEY:", app.config['SECRET_KEY'])
+
 login_manager = LoginManager()
 login_manager.init_app(app)
 

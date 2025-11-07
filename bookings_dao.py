@@ -3,7 +3,7 @@ import sqlite3, trips_dao
 def get_if_booked(username, tripcode):
     query = 'SELECT * FROM bookings WHERE u_username = ? AND tripcode = ?'
 
-    connection = sqlite3.connect('S345271_07-02-2025/db/travelbuds.db')
+    connection = sqlite3.connect('travelbuds.db')
     connection.row_factory = sqlite3.Row
     cursor = connection.cursor()
 
@@ -19,7 +19,7 @@ def get_if_booked(username, tripcode):
 def get_booked_trips(username):
     query = 'SELECT * FROM bookings WHERE u_username = ?'
 
-    connection = sqlite3.connect('S345271_07-02-2025/db/travelbuds.db')
+    connection = sqlite3.connect('travelbuds.db')
     connection.row_factory = sqlite3.Row
     cursor = connection.cursor()
 
@@ -35,7 +35,7 @@ def get_booked_trips(username):
 def new_booking(booking):
     query = 'INSERT INTO bookings(u_username,tripcode,destination,card_img) VALUES (?,?,?,?)'
 
-    connection = sqlite3.connect('S345271_07-02-2025/db/travelbuds.db')
+    connection = sqlite3.connect('travelbuds.db')
     connection.row_factory = sqlite3.Row
     cursor = connection.cursor()
 

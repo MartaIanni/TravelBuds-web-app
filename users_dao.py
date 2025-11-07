@@ -3,7 +3,7 @@ import sqlite3
 def get_user_by_username(username):
     query = 'SELECT * FROM users WHERE username = ?'
 
-    connection = sqlite3.connect('S345271_07-02-2025/db/travelbuds.db')
+    connection = sqlite3.connect('travelbuds.db')
     connection.row_factory = sqlite3.Row
     cursor = connection.cursor()
 
@@ -19,7 +19,7 @@ def get_user_by_username(username):
 def new_user(n_user):
     query = 'INSERT INTO users(name,surname,birthdate,gender,username,password,admin) VALUES (?,?,?,?,?,?,?)'
 
-    connection = sqlite3.connect('S345271_07-02-2025/db/travelbuds.db')
+    connection = sqlite3.connect('travelbuds.db')
     connection.row_factory = sqlite3.Row
     cursor = connection.cursor()
 
