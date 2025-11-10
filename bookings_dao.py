@@ -1,9 +1,12 @@
 import sqlite3, trips_dao
+#Env var per il path del db:
+import os
+DB_PATH = os.environ.get('DB_PATH', 'db/travelbuds.db')
 
 def get_if_booked(username, tripcode):
     query = 'SELECT * FROM bookings WHERE u_username = ? AND tripcode = ?'
 
-    connection = sqlite3.connect('travelbuds.db')
+    connection = sqlite3.connect(DB_PATH)
     connection.row_factory = sqlite3.Row
     cursor = connection.cursor()
 
@@ -19,7 +22,7 @@ def get_if_booked(username, tripcode):
 def get_booked_trips(username):
     query = 'SELECT * FROM bookings WHERE u_username = ?'
 
-    connection = sqlite3.connect('travelbuds.db')
+    connection = sqlite3.connect(DB_PATH)
     connection.row_factory = sqlite3.Row
     cursor = connection.cursor()
 
@@ -35,7 +38,7 @@ def get_booked_trips(username):
 def new_booking(booking):
     query = 'INSERT INTO bookings(u_username,tripcode,destination,card_img) VALUES (?,?,?,?)'
 
-    connection = sqlite3.connect('travelbuds.db')
+    connection = sqlite3.connect(DB_PATH)
     connection.row_factory = sqlite3.Row
     cursor = connection.cursor()
 

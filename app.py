@@ -17,8 +17,10 @@ import os
 
 app = Flask(__name__)
 
+# Variabili d'ambiente:
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
-#Verifica funzionamento env var SECRET_KEY:
+DB_PATH = os.environ.get('DB_PATH')
+#Verifica funzionamento env vars:
 #print("SECRET_KEY:", app.config['SECRET_KEY'])
 
 login_manager = LoginManager()
