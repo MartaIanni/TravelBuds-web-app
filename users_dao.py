@@ -13,6 +13,7 @@ def get_user_by_username(username):
     cursor.execute(query, (username,))
 
     result = cursor.fetchone()
+    #Creare lo User
 
     cursor.close()
     connection.close()

@@ -15,6 +15,7 @@
 ### 🧩 Modificato
 
 - Pulizia della struttura del progetto.
+- Inserimento models pydantic e validazioni
 
 ### 🗑️ Rimosso
 
