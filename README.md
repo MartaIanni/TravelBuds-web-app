@@ -11,7 +11,7 @@ PW: giulio_gorcia
 ## Avvio
 
 - Aprire il terminale nella **directory del progetto**.
-- Creare un **ambiente virtuale** (su MacOS) tramite le seguenti istruzioni:
+- Creare un **ambiente virtuale** e attivarlo tramite le seguenti istruzioni:
 
   `python3 -m venv venv`
 
