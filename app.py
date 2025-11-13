@@ -70,148 +70,199 @@ def trip(id):
 
 @app.route('/newtrip_validation', methods=['POST'])
 def newtrip():
-    newtrip = request.form.to_dict()
+    form_data_newtrip = request.form.to_dict()
 
+    #Recupero dei file immagini
     card = request.files.get('card_img')
     bg = request.files.get('bg_img')
 
+    #Controllo se esistono immagini card e bg, salvataggio in /static e modifica path per 
+    #memorizzarlo sul db
     if card and card.filename != '':
-      card.save('static/'+card.filename)
-      newtrip['card_img'] = '/static/'+card.filename
+      card.save('static/' + card.filename)
+      form_data_newtrip['card_img'] = '/static/' + card.filename
 
     if bg and bg.filename != '':
-      bg.save('static/'+bg.filename)
-      newtrip['bg_img'] = '/static/'+bg.filename
+      bg.save('static/' + bg.filename)
+      form_data_newtrip['bg_img'] = '/static/' + bg.filename
 
-    for key in ['destination', 'start', 'end', 'description', 'transport_price',
-            'stay_price', 'act_price', 'subtitle', 'price', 'tour', 'card_img',
-            'bg_img', 'nights', 'username']:
-        if key not in newtrip or newtrip[key] == '':
-          newtrip[key] = None
+    #Controllo presenza info coordinatore dal form
+    c_username = form_data_newtrip.get("username")
+    # if not c_username:
+    #    flash(f"Errore: coordinatore {c_username} inesistente!")
+    #    return redirect(url_for('admin_home', username = current_user.username))
+    
+    #Recupero del coordinatore dal db tramite lo username
+    coord_dict = users_dao.get_user_by_username(c_username)
+    if not coord_dict:
+       flash(f"Errore: coordinatore {c_username} non trovato!")
+       return redirect(url_for('admin_home', username = current_user.username))
+    #trasformo le info di coord da dict a model User
+    coord_model= User(**coord_dict)
 
-    try:
-        newtrip['seats'] = int(newtrip['seats'])
-        newtrip['public'] = int(newtrip['public'])
-        newtrip['free_seats'] = int(newtrip['seats'])
-    except ValueError:
-        flash("Errore di memorizzazione per: seats, public o free_seats.")
-        return redirect(url_for('admin_home', username=newtrip['a_username']))
+    #Conversione dei campi:
+    #  try:
+    #     newtrip['seats'] = int(newtrip['seats'])
+    #     newtrip['public'] = int(newtrip['public'])
+    #     newtrip['free_seats'] = int(newtrip['seats'])
+    # except ValueError:
+    #     flash("Errore di memorizzazione per: seats, public o free_seats.")
+    #     return redirect(url_for('admin_home', username=newtrip['a_username']))
 
-    newtrip['start'] = datetime.strptime(newtrip['start'], "%Y-%m-%d")
-    newtrip['end'] = datetime.strptime(newtrip['end'], "%Y-%m-%d")
+#CONTROLLI VARI (sostituiti con pydantic):
 
-    today = datetime.today()
+    for field in ['seats', 'transport_price', 'stay_price', 'act_price', 'free_seats']:
+      if not form_data_newtrip.get(field):
+          form_data_newtrip[field] = 0
+
+    # try:
+    #    form_data_newtrip['seats'] = int(form_data_newtrip.get('seats',0))
+    #    form_data_newtrip['transport_price'] = int(form_data_newtrip.get('transport_price',0))
+    #    form_data_newtrip['stay_price'] = int(form_data_newtrip.get('stay_price',0))
+    #    form_data_newtrip['act_price'] = int(form_data_newtrip.get('act_price',0))
+    #   #  form_data_newtrip['price'] = int(form_data_newtrip.get('price',0))
+    #    form_data_newtrip['free_seats'] = int(form_data_newtrip.get('free_seats',0))
+    #   #  form_data_newtrip['tripcode'] = int(form_data_newtrip.get('tripcode',0))
+    # except ValueError:
+    #    flash("Errore nei valori numerici durante la conversione.")
+    #    return redirect(url_for('admin_home', username=c_username))
+    
+    #Aggiungo il modello coordinatore al dict form_data_newtrip
+    form_data_newtrip['coordinator'] = coord_model
+
+
+    # for key in ['destination', 'start', 'end', 'description', 'transport_price',
+    #         'stay_price', 'act_price', 'subtitle', 'price', 'tour', 'card_img',
+    #         'bg_img', 'nights', 'username']:
+    #     if key not in newtrip or newtrip[key] == '':
+    #       newtrip[key] = None
+
+    # newtrip['start'] = datetime.strptime(newtrip['start'], "%Y-%m-%d")
+    # newtrip['end'] = datetime.strptime(newtrip['end'], "%Y-%m-%d")
+
+    # today = datetime.today()
 
   #Controllo se data start e' successiva a quella odierna:
   #Validazione pydantic ok manca invio risultato per messaggio flash
-    if newtrip['start'] < today:
-        flash("Inserisci una data di partenza successiva a quella odierna, grazie!")
-        return redirect(url_for('admin_home', username=newtrip['a_username']))
+    # if newtrip['start'] < today:
+    #     flash("Inserisci una data di partenza successiva a quella odierna, grazie!")
+    #     return redirect(url_for('admin_home', username=newtrip['a_username']))
 
   #Controllo se data di end successiva a data di start:
   #Validazione pydantic ok manca invio risultato per messaggio flash
-    newtrip['start'] = newtrip['start'].strftime("%d/%m/%Y")
-    newtrip['end'] = newtrip['end'].strftime("%d/%m/%Y")
+    # newtrip['start'] = newtrip['start'].strftime("%d/%m/%Y")
+    # newtrip['end'] = newtrip['end'].strftime("%d/%m/%Y")
 
-    format = "%d/%m/%Y"
-    try:
-        start = datetime.strptime(newtrip['start'], format)
-        end = datetime.strptime(newtrip['end'], format)
+    # format = "%d/%m/%Y"
+    # try:
+    #     start = datetime.strptime(newtrip['start'], format)
+    #     end = datetime.strptime(newtrip['end'], format)
 
-        if start >= end:
-            flash("Errore: la data di ritorno deve essere successiva alla partenza.")
-            return redirect(url_for('admin_home', username=newtrip['a_username']))
+    #     if start >= end:
+    #         flash("Errore: la data di ritorno deve essere successiva alla partenza.")
+    #         return redirect(url_for('admin_home', username=newtrip['a_username']))
 
       #Calcolo delle notti tramite le due date start end:
       #Pydantic computed field ok
-        newtrip['nights'] = (end - start).days
-    except ValueError:
-        flash("Errore: formato data non valido. Usa 'dd/mm/yy'.")
-        return redirect(url_for('admin_home', username=newtrip['a_username']))
+    #     newtrip['nights'] = (end - start).days
+    # except ValueError:
+    #     flash("Errore: formato data non valido. Usa 'dd/mm/yy'.")
+    #     return redirect(url_for('admin_home', username=newtrip['a_username']))
 
-    res = trips_dao.add_trip(newtrip)
+    try:
+       #Creazione del nuovo modello viaggio con validazioni associate
+       new_trip = Trip(**form_data_newtrip)
+    except ValueError as e:
+       flash(f"Errore nella validazione dei dati del nuovo viaggio: {e}")
+       return redirect(url_for('admin_home', username=c_username))
+
+  #Salvataggio nel db:
+    res = trips_dao.add_trip(new_trip.model_dump())
 
     if res:
         flash("Nuovo viaggio caricato con successo!")
-        return redirect(url_for('admin_home', username=newtrip['a_username']))
-
-    flash("Ops, qualcosa è andato storto! Riprova.")
-    return redirect(url_for('admin_home', username=newtrip['a_username']))
+    else:
+        flash("Ops, qualcosa è andato storto! Riprova.")
+    return redirect(url_for('admin_home', username=c_username))
 
 
 @app.route('/draft_validation', methods=['POST'])
 def draft_validation():
+    
     action = request.form.get('action')
-    drafttrip = request.form.to_dict()
+    form_data_drafttrip = request.form.to_dict()
 
+    #Recupero dei file immagini
     card = request.files.get('card_img')
     bg = request.files.get('bg_img')
 
-  #Controllo se immagine card caricata o meno
+  #Controllo se esistono immagini card e bg, salvataggio in /static e modifica path per 
+  #memorizzarlo sul db
     if card and card.filename != '':
-      card.save('static/'+card.filename)
-      drafttrip['card_img'] = 'S345271_07-02-2025/static/'+card.filename
+      card.save('static/' + card.filename)
+      form_data_drafttrip['card_img'] = '/static/' + card.filename
 
-  #Controllo se immagine bg caricata o meno
     if bg and bg.filename != '':
-      bg.save('static/'+bg.filename)
-      drafttrip['bg_img'] = 'S345271_07-02-2025/static/'+bg.filename
+      bg.save('static/' + bg.filename)
+      form_data_drafttrip['bg_img'] = '/static/' + bg.filename
+
+
 
     required_fields = ['destination', 'start', 'end', 'description', 'transport_price',
                        'stay_price', 'act_price', 'subtitle', 'price', 'tour', 'card_img',
                        'bg_img', 'nights', 'a_username','tripcode']
   #Riempimento dei campi non compilati nel form con None
     for key in required_fields:
-        if key not in drafttrip or drafttrip[key] == '':
-          drafttrip[key] = None
+        if key not in form_data_drafttrip or form_data_drafttrip[key] == '':
+          form_data_drafttrip[key] = None
 
     try:
         #Conversione dei valori dal form da number -> int
-        drafttrip['seats'] = int(drafttrip['seats'])
-        drafttrip['free_seats'] = int(drafttrip['seats'])
+        form_data_drafttrip['seats'] = int(form_data_drafttrip['seats'])
+        form_data_drafttrip['free_seats'] = int(form_data_drafttrip['seats'])
     except ValueError:
         flash("Errore di memorizzazione per: seats, public o free_seats.")
-        return redirect(url_for('admin_home', username=drafttrip['a_username']))
+        return redirect(url_for('admin_home', username=form_data_drafttrip['a_username']))
 
     format = "%d/%m/%Y"
     try:
         #Controllo data ritorno successiva a quella di partenza
-        drafttrip['start'] = datetime.strptime(drafttrip['start'], "%Y-%m-%d").strftime(format)
-        drafttrip['end'] = datetime.strptime(drafttrip['end'], "%Y-%m-%d").strftime(format)
+        form_data_drafttrip['start'] = datetime.strptime(form_data_drafttrip['start'], "%Y-%m-%d").strftime(format)
+        form_data_drafttrip['end'] = datetime.strptime(form_data_drafttrip['end'], "%Y-%m-%d").strftime(format)
 
-        start = datetime.strptime(drafttrip['start'], format)
-        end = datetime.strptime(drafttrip['end'], format)
+        start = datetime.strptime(form_data_drafttrip['start'], format)
+        end = datetime.strptime(form_data_drafttrip['end'], format)
 
         if start >= end:
             flash("Errore: la data di ritorno deve essere successiva alla partenza.")
-            return redirect(url_for('admin_home', username=drafttrip['a_username']))
+            return redirect(url_for('admin_home', username=form_data_drafttrip['a_username']))
       #Calcolo delle notti con start e end
-        drafttrip['nights'] = (end - start).days
+        form_data_drafttrip['nights'] = (end - start).days
     except ValueError:
         flash("Errore: formato data non valido. Usa 'dd/mm/yy'.")
-        return redirect(url_for('admin_home', username=drafttrip['a_username']))
+        return redirect(url_for('admin_home', username=form_data_drafttrip['a_username']))
 
-    res = trips_dao.save_trip(drafttrip)
+    res = trips_dao.save_trip(form_data_drafttrip)
 
     if not res:
         flash("Ops, la bozza non è stata salvata! Riprova.")
-        return redirect(url_for('admin_home', username=drafttrip['a_username']))
+        return redirect(url_for('admin_home', username=form_data_drafttrip['a_username']))
 
   #Se click su bottone 'Pubblica'
     if action == 'post':
       #Controllo che tutti i campi siano stati compilati
       for key in required_fields:
-        if not drafttrip[key]:
+        if not form_data_drafttrip[key]:
           flash("Completa tutti i campi del viaggio per pubblicare!")
-          return redirect(url_for('admin_home', username=drafttrip['a_username']))
+          return redirect(url_for('admin_home', username=form_data_drafttrip['a_username']))
       #Salvataggio del viaggio nel db
-      res = trips_dao.public_trip(drafttrip['tripcode'])
+      res = trips_dao.public_trip(form_data_drafttrip['tripcode'])
 
       if not res:
           flash("Ops, pubblicazione del viaggio non riuscita! Riprova.")
-          return redirect(url_for('admin_home', username=drafttrip['a_username']))
+          return redirect(url_for('admin_home', username=form_data_drafttrip['a_username']))
 
-    return redirect(url_for('admin_home', username=drafttrip['a_username']))
+    return redirect(url_for('admin_home', username=form_data_drafttrip['a_username']))
 
 
 @app.route('/delete_validation', methods=['POST'])

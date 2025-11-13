@@ -33,22 +33,22 @@ class User(BaseModel):
     is_coordinator: bool
 
 class Trip(BaseModel):
+    tripcode: Annotated[int, Field(gt=0),]
     destination: str
     start: Annotated[str, Field(pattern=r"^\d{2}/\d{2}/\d{4}$")]  # es accetta: 11/11/2025
     end: Annotated[str, Field(pattern=r"^\d{2}/\d{2}/\d{4}$")]
-    seats: Annotated[int, Field(ge=1),]
+    seats: Annotated[int, Field(ge=0),]
     description: str = ""
     transport_price: Annotated[int, Field(ge=0),]
     stay_price: Annotated[int, Field(ge=0),]
     act_price: Annotated[int, Field(ge=0),]
     subtitle: str = ""
     price: Annotated[int, Field(ge=0),]
-    tripcode: Annotated[int, Field(gt=0),]
     tour: str = ""
     is_published: bool = False
     free_seats: Annotated[int, Field(gt=0),] = 0
-    card_img: str = ""
-    bg_img: str = ""
+    card_img_path: str = ""
+    bg_img_path: str = ""
     coordinator: User
 
     #NEWTRIP:
@@ -83,8 +83,19 @@ class Trip(BaseModel):
         end_date = datetime.strptime(self.end, "%d/%m/%Y")
         return (end_date - start_date).days
     
-# class Quest(BaseModel):
+class Quest(BaseModel):
+    qid: Annotated[int, Field(gt=0),]
+    content: str
+    user: User
+    answer: str
+    destination: str
+    coord: User
 
-# class Booking(BaseModel):
+
+class Booking(BaseModel):
+    bid: Annotated[int, Field(gt=0),]
+    user: User
+    trip: Trip
+    card_img_path: str
 
 
