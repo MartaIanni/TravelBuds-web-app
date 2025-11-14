@@ -1,11 +1,12 @@
 from datetime import datetime
 #Pydantic:
-from pydantic import BaseModel, Field, SecretStr, field_validator, computed_field
+from pydantic import BaseModel, Field, SecretStr, field_validator, computed_field, model_validator
 #Annotated: vincoli sui fields
 #Literal: limitare i valori di un field
 from typing import Literal, Annotated
 
-
+#Check se password inserita e' corretta
+from werkzeug.security import check_password_hash
 
 # from flask_login import UserMixin # type: ignore
 
@@ -29,8 +30,19 @@ class User(BaseModel):
     username: str
     password: SecretStr
     birthdate: str
-    gender: Literal["M","F"]
+    gender: str
     is_coordinator: bool
+
+class UserRegistration(BaseModel):
+    username: str
+    password: str
+    db_password: str
+
+    @model_validator(mode="after")
+    def password_match(self) -> "UserRegistration":
+        if not check_password_hash(self.db_password, self.password):
+            raise ValueError("Password errata!")
+        return self
 
 class Trip(BaseModel):
     tripcode: Annotated[int, Field(gt=0),]
@@ -43,14 +55,12 @@ class Trip(BaseModel):
     stay_price: Annotated[int, Field(ge=0),]
     act_price: Annotated[int, Field(ge=0),]
     subtitle: str = ""
-    price: Annotated[int, Field(ge=0),]
     tour: str = ""
     is_published: bool = False
-    free_seats: Annotated[int, Field(gt=0),] = 0
     card_img_path: str = ""
     bg_img_path: str = ""
     coordinator: User
-
+    max_seats: int = 10
     #NEWTRIP:
 
     #Start sia successiva alla data odierna
@@ -83,11 +93,21 @@ class Trip(BaseModel):
         end_date = datetime.strptime(self.end, "%d/%m/%Y")
         return (end_date - start_date).days
     
+    #Calcolo il prezzo totale del viaggio:
+    @computed_field
+    def tot_price(self) -> int:
+        return (self.transport_price + self.act_price + self.stay_price)
+
+#X  Calcolo dei posti liberi
+    @computed_field
+    def free_seats(self) -> int:
+        return (self.max_seats - self.seats)
+    
 class Quest(BaseModel):
     qid: Annotated[int, Field(gt=0),]
     content: str
     user: User
-    answer: str
+    answer: str | None
     destination: str
     coord: User
 
@@ -97,5 +117,7 @@ class Booking(BaseModel):
     user: User
     trip: Trip
     card_img_path: str
+
+
 
 
