@@ -109,6 +109,7 @@ def newtrip():
     #   bg.save('static/' + bg.filename)
     #   form_data_newtrip['bg_img_path'] = '/static/' + bg.filename
 
+    #Controllo se esistono immagini card e bg, salvataggio in /static e modifica path per memorizzarlo sul db:
     form_data_newtrip = save_uploaded_images(form_data_newtrip,card,bg)
 
     #Controllo presenza info coordinatore dal form
@@ -213,15 +214,8 @@ def draft_validation():
     card = request.files.get('card_img')
     bg = request.files.get('bg_img')
 
-  #Controllo se esistono immagini card e bg, salvataggio in /static e modifica path per 
-  #memorizzarlo sul db
-    if card and card.filename != '':
-      card.save('static/' + card.filename)
-      form_data_draft['card_img_path'] = '/static/' + card.filename
-
-    if bg and bg.filename != '':
-      bg.save('static/' + bg.filename)
-      form_data_draft['bg_img_path'] = '/static/' + bg.filename
+  #Controllo se esistono immagini card e bg, salvataggio in /static e modifica path per memorizzarlo sul db:
+    form_data_draft = save_uploaded_images(form_data_draft,card,bg)
 
 #CONTROLLI VARI: sostituiti con Pydantic
 
@@ -275,9 +269,19 @@ def draft_validation():
     #Se click su bottone 'Pubblica':
     if action == 'post':
       required_fields = [
-            'destination', 'start', 'end', 'description', 'transport_price',
-            'stay_price', 'act_price', 'subtitle', 'price', 'tour',
-            'card_img_path', 'bg_img_path', 'tripcode'
+            'destination', 
+            'start', 
+            'end', 
+            'description', 
+            'transport_price',
+            'stay_price', 
+            'act_price', 
+            'subtitle', 
+            'price', 
+            'tour',
+            'card_img_path', 
+            'bg_img_path', 
+            'tripcode'
         ]
     #Controllo che tutti i campi siano stati compilati
       for key in required_fields:
@@ -457,6 +461,12 @@ def signup():
      newuser_data['gender'] = '/static/woman.jpg'
   #print(newuser_data)
 
+  #Conversione da formato datetime in formato stringa
+  newuser_data['birthdate'] = datetime.strptime(newuser_data['birthdate'], "%Y-%m-%d").strftime("%d/%m/%Y")
+  
+  #Hashing della password
+  newuser_data['password'] = generate_password_hash(newuser_data['password'])
+
   # #Controllo presenza campi primari:
   try:
      User(**newuser_data)
@@ -481,12 +491,6 @@ def signup():
   # if newuser_data ['password'] == '':
   #   flash('Completa tutti i campi per iscriverti')
   #   return redirect(url_for('home'))
-
-  #Conversione da formato datetime in formato stringa
-  newuser_data['birthdate'] = datetime.strptime(newuser_data['birthdate'], "%Y-%m-%d").strftime("%d/%m/%Y")
-  
-  #Hashing della password
-  newuser_data['password'] = generate_password_hash(newuser_data['password'])
 
   #Prova di inserimento del nuovo User nel db
   success = users_dao.new_user(newuser_data)
