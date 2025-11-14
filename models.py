@@ -3,24 +3,17 @@ from datetime import datetime
 from pydantic import BaseModel, Field, SecretStr, field_validator, computed_field, model_validator
 #Annotated: vincoli sui fields
 #Literal: limitare i valori di un field
-from typing import Literal, Annotated
+from typing import Annotated
 
 #Check se password inserita e' corretta
 from werkzeug.security import check_password_hash
 
-# from flask_login import UserMixin # type: ignore
-
-# class User(UserMixin):
-#     def __init__(self, name, surname, birthdate, gender, username, password, admin):
-#         self.name = name
-#         self.surname = surname
-#         self.birthdate = birthdate
-#         self.gender = gender
-#         self.username = username
-#         self.password = password
-#         self.admin = admin
-#     def get_id(self):
-#         return self.username
+#Validation.py
+from validation import (
+    validate_password, 
+    validate_start_after_today, 
+    validate_end_after_start
+    )
     
 #Pydantic:
 class User(BaseModel):
@@ -40,9 +33,10 @@ class UserRegistration(BaseModel):
 
     @model_validator(mode="after")
     def password_match(self) -> "UserRegistration":
-        if not check_password_hash(self.db_password, self.password):
-            raise ValueError("Password errata!")
+        # Verifica password tramite validatore esterno
+        validate_password(self.db_password,self.password)
         return self
+
 
 class Trip(BaseModel):
     tripcode: Annotated[int, Field(gt=0),]
@@ -61,28 +55,21 @@ class Trip(BaseModel):
     bg_img_path: str = ""
     coordinator: User
     max_seats: int = 10
-    #NEWTRIP:
 
     #Start sia successiva alla data odierna
     @field_validator("start")
     @classmethod
-    def validate_date_start(cls, v: str):
-        start = datetime.strptime(v, "%d/%m/%Y")
-        if start.date() < datetime.today().date():
-            raise ValueError("La data di inizio deve essere successiva a oggi.")
-        return v
+    def validate_start(cls, v: str):
+        return validate_start_after_today(v)
     
     #End sia successivo alla data di start
     @field_validator("end")
     @classmethod
-    def validate_date_end(cls, v: str, info):
+    def validate_end(cls, v: str, info):
         #in info.data abbiamo i campi gia' validati in ordine precedenti a end (incluso start)
-        start_str = info.data.get("start")
-        if start_str:
-            start = datetime.strptime(start_str, "%d/%m/%Y")
-            end = datetime.strptime(v, "%d/%m/%Y")
-            if end <= start:
-                raise ValueError("La data di fine deve essere successiva a quella di inizio.")
+        start = info.data.get("start")
+        if start:
+            return validate_end_after_start(start, v)
         return v
     
     @computed_field
@@ -117,7 +104,4 @@ class Booking(BaseModel):
     user: User
     trip: Trip
     card_img_path: str
-
-
-
-
+    
