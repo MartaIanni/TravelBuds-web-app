@@ -18,7 +18,7 @@
 
 - Pulizia della struttura del progetto.
 - Pydantic: costruzione dei modelli (models.py) e separazione delle validazioni (validation.py) senza l'utilizzo di ORM (SQLAlchemy)
-- SQLAlchemy: completamento di orm/models.py con test effettuato.
+- SQLAlchemy: completamento dei file in app/domain, app/orm (models.py testato), app/schemas orm/models.py.
 
 ### 🗑️ Rimosso
 

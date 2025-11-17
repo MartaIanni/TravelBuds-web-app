@@ -1,4 +1,3 @@
-from datetime import date
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from sqlalchemy import String, Integer, Boolean, ForeignKey, Text
 
@@ -16,8 +15,8 @@ class UserORM(Base):
     username: Mapped[str] = mapped_column(String(50), unique=True, nullable=False)
     password: Mapped[str] = mapped_column(String(255), nullable=False)
     birthdate: Mapped[str] = mapped_column(String(20), nullable=False)
-    gender: Mapped[str] = mapped_column(String(20), nullable=False)
-    is_coordinator: Mapped[bool] = mapped_column(Boolean, default=False)
+    gender: Mapped[str] = mapped_column(String(200), nullable=False)
+    is_coordinator: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
 
     #Domande ricevute (da viaggiatori → verso coordinatore)
     quests_from: Mapped[list["QuestORM"]] = relationship(
@@ -61,11 +60,9 @@ class TripORM(Base):
     card_img_path: Mapped[str] = mapped_column(String(250), default="")
     bg_img_path: Mapped[str] = mapped_column(String(250), default="")
     is_published: Mapped[bool] = mapped_column(Boolean, default=False)
-
     #ForeignKey verso il coordinatore
-    coord_id: Mapped[int | None] = mapped_column(
-        ForeignKey("users.uid"), nullable=True
-    )
+    coord_id: Mapped[int | None] = mapped_column( ForeignKey("users.uid"), nullable=True)
+
     #Riempito da coordinated_trips in UserORM
     coordinator: Mapped["UserORM"] = relationship(
         back_populates="coordinated_trips",
@@ -78,17 +75,16 @@ class TripORM(Base):
         foreign_keys="BookingORM.trip_id"
     )
 
-
 class QuestORM(Base):
     __tablename__ = "quests"
 
-    qid: Mapped[int] = mapped_column(primary_key=True)
+    qid: Mapped[int] = mapped_column(Integer, primary_key=True)
     content: Mapped[str] = mapped_column(Text, nullable=False)
-    answer: Mapped[str] = mapped_column(Text, nullable=False)
+    answer: Mapped[str] = mapped_column(Text, nullable=True)
     destination: Mapped[str] = mapped_column(String(100), nullable=False)
 
     #Viaggiotore che ha fatto la domanda
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.uid"), nullable=False)
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.uid"), nullable=False)
 
     user: Mapped["UserORM"] = relationship(
         back_populates="quests_to",
@@ -96,7 +92,7 @@ class QuestORM(Base):
     )
 
     #Coordinatore a cui è rivolta
-    coord_id: Mapped[int] = mapped_column(ForeignKey("users.uid"), nullable=False)
+    coord_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.uid"), nullable=False)
 
     coord: Mapped["UserORM"] = relationship(
         back_populates="quests_from",
@@ -106,11 +102,11 @@ class QuestORM(Base):
 class BookingORM(Base):
     __tablename__ = "bookings"
 
-    bid: Mapped[int] = mapped_column(primary_key=True)
-    card_img_path: Mapped[str] = mapped_column(String(2500), nullable=False, default="")
+    bid: Mapped[int] = mapped_column(Integer, primary_key=True)
+    card_img_path: Mapped[str] = mapped_column(String(250), nullable=False, default="")
 
     #Riferimento allo user che ha prenotato:
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.uid"), nullable=False)
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.uid"), nullable=False)
 
     user: Mapped["UserORM"] = relationship(
         back_populates="bookings",
@@ -118,7 +114,7 @@ class BookingORM(Base):
     )
     
     #Riferimento al viaggio protagonista della prenotazione:
-    trip_id: Mapped[int] = mapped_column(ForeignKey("trips.tid"), nullable=False)
+    trip_id: Mapped[int] = mapped_column(Integer, ForeignKey("trips.tid"), nullable=False)
 
     trip: Mapped["TripORM"] = relationship(
         back_populates="bookings",

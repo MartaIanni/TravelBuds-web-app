@@ -6,7 +6,7 @@ Nessuna dipendenza dai modelli per evitare cicli.
 #Check se password inserita e' corretta
 from werkzeug.security import check_password_hash
 
-from datetime import date, datetime
+from datetime import datetime
 
 def validate_password(db_password: str, input_password: str) -> None:
     if not check_password_hash(db_password, input_password):
@@ -24,3 +24,10 @@ def validate_end_after_start(start_date: str, end_date: str) -> str:
     if end <= start:
         raise ValueError("La data di fine deve essere successiva a quella di inizio.")
     return end_date
+
+#Toglie spazi se prima o dopo la stringa e controlla se e'
+# una stringa
+def clean_string(value: str) -> str:
+    if not isinstance(value, str):
+        raise TypeError("Deve essere una stringa")
+    return value.strip()
