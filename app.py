@@ -9,9 +9,14 @@ from werkzeug.security import generate_password_hash
 from pydantic import ValidationError
 
 import trips_dao, users_dao, quests_dao,bookings_dao
+
 #Models.py
-from models import User, Trip, UserRegistration
+from app.orm.models import User, Trip, UserRegistration, Quest, Booking
 from datetime import datetime
+
+#SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy
+from app import db
 
 #Import per env vars
 import os
@@ -23,6 +28,12 @@ app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 DB_PATH = os.environ.get('DB_PATH')
 #Verifica funzionamento env vars:
 #print("SECRET_KEY:", app.config['SECRET_KEY'])
+
+# URI corretta per SQLite
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
+
+db = SQLAlchemy(app)
+db.create_all()
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -86,7 +97,6 @@ def user_profile(username):
 @login_required
 def trip(id):
     #username di u
-
     trip = trips_dao.get_trip(id)
     return render_template('trip.html', trip=trip)
 
@@ -99,24 +109,11 @@ def newtrip():
     card = request.files.get('card_img')
     bg = request.files.get('bg_img')
 
-    #Controllo se esistono immagini card e bg, salvataggio in /static e modifica path per 
-    #memorizzarlo sul db
-    # if card and card.filename != '':
-    #   card.save('static/' + card.filename)
-    #   form_data_newtrip['card_img_path'] = '/static/' + card.filename
-
-    # if bg and bg.filename != '':
-    #   bg.save('static/' + bg.filename)
-    #   form_data_newtrip['bg_img_path'] = '/static/' + bg.filename
-
     #Controllo se esistono immagini card e bg, salvataggio in /static e modifica path per memorizzarlo sul db:
     form_data_newtrip = save_uploaded_images(form_data_newtrip,card,bg)
 
     #Controllo presenza info coordinatore dal form
     c_username = form_data_newtrip.get("username")
-    # if not c_username:
-    #    flash(f"Errore: coordinatore {c_username} inesistente!")
-    #    return redirect(url_for('admin_home', username = current_user.username))
     
     #Recupero del coordinatore dal db tramite lo username
     coord_dict = users_dao.get_user_by_username(c_username)
@@ -126,74 +123,14 @@ def newtrip():
     #trasformo le info di coord da dict a model User
     coord_model= User(**coord_dict)
 
-    #Conversione dei campi:
-    #  try:
-    #     newtrip['seats'] = int(newtrip['seats'])
-    #     newtrip['public'] = int(newtrip['public'])
-    #     newtrip['free_seats'] = int(newtrip['seats'])
-    # except ValueError:
-    #     flash("Errore di memorizzazione per: seats, public o free_seats.")
-    #     return redirect(url_for('admin_home', username=newtrip['a_username']))
-
 #CONTROLLI VARI (sostituiti con pydantic):
 
     for field in ['seats', 'transport_price', 'stay_price', 'act_price', 'free_seats']:
       if not form_data_newtrip.get(field):
           form_data_newtrip[field] = 0
-
-    # try:
-    #    form_data_newtrip['seats'] = int(form_data_newtrip.get('seats',0))
-    #    form_data_newtrip['transport_price'] = int(form_data_newtrip.get('transport_price',0))
-    #    form_data_newtrip['stay_price'] = int(form_data_newtrip.get('stay_price',0))
-    #    form_data_newtrip['act_price'] = int(form_data_newtrip.get('act_price',0))
-    #   #  form_data_newtrip['price'] = int(form_data_newtrip.get('price',0))
-    #    form_data_newtrip['free_seats'] = int(form_data_newtrip.get('free_seats',0))
-    #   #  form_data_newtrip['tripcode'] = int(form_data_newtrip.get('tripcode',0))
-    # except ValueError:
-    #    flash("Errore nei valori numerici durante la conversione.")
-    #    return redirect(url_for('admin_home', username=c_username))
     
     #Aggiungo il modello coordinatore al dict form_data_newtrip
     form_data_newtrip['coordinator'] = coord_model
-
-
-    # for key in ['destination', 'start', 'end', 'description', 'transport_price',
-    #         'stay_price', 'act_price', 'subtitle', 'price', 'tour', 'card_img',
-    #         'bg_img', 'nights', 'username']:
-    #     if key not in newtrip or newtrip[key] == '':
-    #       newtrip[key] = None
-
-    # newtrip['start'] = datetime.strptime(newtrip['start'], "%Y-%m-%d")
-    # newtrip['end'] = datetime.strptime(newtrip['end'], "%Y-%m-%d")
-
-    # today = datetime.today()
-
-  #Controllo se data start e' successiva a quella odierna:
-  #Validazione pydantic ok manca invio risultato per messaggio flash
-    # if newtrip['start'] < today:
-    #     flash("Inserisci una data di partenza successiva a quella odierna, grazie!")
-    #     return redirect(url_for('admin_home', username=newtrip['a_username']))
-
-  #Controllo se data di end successiva a data di start:
-  #Validazione pydantic ok manca invio risultato per messaggio flash
-    # newtrip['start'] = newtrip['start'].strftime("%d/%m/%Y")
-    # newtrip['end'] = newtrip['end'].strftime("%d/%m/%Y")
-
-    # format = "%d/%m/%Y"
-    # try:
-    #     start = datetime.strptime(newtrip['start'], format)
-    #     end = datetime.strptime(newtrip['end'], format)
-
-    #     if start >= end:
-    #         flash("Errore: la data di ritorno deve essere successiva alla partenza.")
-    #         return redirect(url_for('admin_home', username=newtrip['a_username']))
-
-      #Calcolo delle notti tramite le due date start end:
-      #Pydantic computed field ok
-    #     newtrip['nights'] = (end - start).days
-    # except ValueError:
-    #     flash("Errore: formato data non valido. Usa 'dd/mm/yy'.")
-    #     return redirect(url_for('admin_home', username=newtrip['a_username']))
 
     #Validazione e salvataggio del viaggio:
     if validate_and_save_trip(form_data_newtrip):
@@ -218,37 +155,6 @@ def draft_validation():
     form_data_draft = save_uploaded_images(form_data_draft,card,bg)
 
 #CONTROLLI VARI: sostituiti con Pydantic
-
-  # #Riempimento dei campi non compilati nel form con None
-  #   for key in required_fields:
-  #       if key not in form_data_draft or form_data_draft[key] == '':
-  #         form_data_draft[key] = None
-
-    # try:
-    #     #Conversione dei valori dal form da number -> int
-    #     form_data_draft['seats'] = int(form_data_draft['seats'])
-    #     form_data_draft['free_seats'] = int(form_data_draft['seats'])
-    # except ValueError:
-    #     flash("Errore di memorizzazione per: seats, public o free_seats.")
-    #     return redirect(url_for('admin_home', username=form_data_draft['a_username']))
-
-    # format = "%d/%m/%Y"
-    # try:
-    #     #Controllo data ritorno successiva a quella di partenza
-    #     form_data_draft['start'] = datetime.strptime(form_data_draft['start'], "%Y-%m-%d").strftime(format)
-    #     form_data_draft['end'] = datetime.strptime(form_data_draft['end'], "%Y-%m-%d").strftime(format)
-
-    #     start = datetime.strptime(form_data_draft['start'], format)
-    #     end = datetime.strptime(form_data_draft['end'], format)
-
-    #     if start >= end:
-    #         flash("Errore: la data di ritorno deve essere successiva alla partenza.")
-    #         return redirect(url_for('admin_home', username=form_data_draft['a_username']))
-    #   #Calcolo delle notti con start e end
-    #     form_data_draft['nights'] = (end - start).days
-    # except ValueError:
-    #     flash("Errore: formato data non valido. Usa 'dd/mm/yy'.")
-    #     return redirect(url_for('admin_home', username=form_data_draft['a_username']))
     
     #Creazione modello User da inserire in form_data
     a_user = users_dao.get_user_by_username(current_user.username)
@@ -304,7 +210,6 @@ def draft_validation():
 @login_required
 def del_trip():
     tripcode = request.form.get("tripcode")
-    # username = request.form.get("username")
 
     #Controllo presenza del viaggio da cancellare nel db
     if not trips_dao.get_trip(tripcode):
@@ -323,7 +228,6 @@ def del_trip():
 @login_required
 def booking():
   book_data = request.form.to_dict()
-  # u_username = book_data['u_username']
 
   #Controllo se gia' presente tra le prenotazioni dell'utente:
   isbooked = bookings_dao.get_if_booked(current_user.username, book_data['tripcode'])
@@ -414,23 +318,9 @@ def user_login():
         flash("Username non trovato. Controlla e riprova.")
         return redirect(url_for('home'))
 
-    #user_data: contiene [username,password,db_password]
-    #userd_db: contiene tutti i dati dello User
-
     #Controllo se la password inserita e' corretta
     user_data['db_password'] = user_db['password']
     UserRegistration(**user_data)
-
-    # if not user_db or not check_password_hash(user_db['password'], user_data['password']):
-    #     flash("Username o password errati!")
-    #     return redirect(url_for('home'))
-    # else:
-
-    #Memorizzazione del nuovo field is_coordinator
-    # if user_db['admin'] == 1: 
-    #    user_data['is_coordinator'] = True
-    # else: 
-    #    user_data['is_coordinator'] = False
 
     new_user = User(**user_db)
 
@@ -459,7 +349,6 @@ def signup():
      newuser_data['gender'] = '/static/man.jpg'
   else:
      newuser_data['gender'] = '/static/woman.jpg'
-  #print(newuser_data)
 
   #Conversione da formato datetime in formato stringa
   newuser_data['birthdate'] = datetime.strptime(newuser_data['birthdate'], "%Y-%m-%d").strftime("%d/%m/%Y")
@@ -467,30 +356,11 @@ def signup():
   #Hashing della password
   newuser_data['password'] = generate_password_hash(newuser_data['password'])
 
-  # #Controllo presenza campi primari:
+  #Controllo presenza campi primari:
   try:
      User(**newuser_data)
   except ValueError as e:
      flash(f"Errore nella validazione della registrazione: {e}")
-
-  # if newuser_data ['name'] == '':
-  #   flash('Completa tutti i campi per iscriverti')
-  #   return redirect(url_for('home'))
-  # if newuser_data ['surname'] == '':
-  #   flash('Completa tutti i campi per iscriverti')
-  #   return redirect(url_for('home'))
-  # if newuser_data ['birthdate'] == '':
-  #   flash('Completa tutti i campi per iscriverti')
-  #   return redirect(url_for('home'))
-  # if newuser_data ['gender'] == '':
-  #   flash('Completa tutti i campi per iscriverti')
-  #   return redirect(url_for('home'))
-  # if newuser_data ['username'] == '':
-  #   flash('Completa tutti i campi per iscriverti')
-  #   return redirect(url_for('home'))
-  # if newuser_data ['password'] == '':
-  #   flash('Completa tutti i campi per iscriverti')
-  #   return redirect(url_for('home'))
 
   #Prova di inserimento del nuovo User nel db
   success = users_dao.new_user(newuser_data)
@@ -521,7 +391,6 @@ def load_user(user_id):
                 gender=user_db['gender'], 
                 is_coordinator=coord
               )
-
 
 @app.route("/logout")
 @login_required

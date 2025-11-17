@@ -11,11 +11,14 @@
 - File CHANGELOG.md per tracciare le modifiche future.
 - Inserimento dei file immagini, del db e della variabile d’ambiente per SECRET_KEY.
 - Dependencies: inserimento di .gitignore e requirements.txt.
+- Pydantic: inserimento di validation.py
+- SQLAlchemy: package app/ con suddivisione nei packages domain/, orm/ e schemas/.
 
 ### 🧩 Modificato
 
 - Pulizia della struttura del progetto.
-- Inserimento models pydantic e validazioni
+- Pydantic: costruzione dei modelli (models.py) e separazione delle validazioni (validation.py) senza l'utilizzo di ORM (SQLAlchemy)
+- SQLAlchemy: completamento di orm/models.py con test effettuato.
 
 ### 🗑️ Rimosso
 

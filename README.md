@@ -19,7 +19,7 @@ PW: giulio_gorcia
 
 - Installare le **dipendenze**:
 
-  `pip install flask flask-login flask-session werkzeug pydantic`
+  `pip install flask flask-login flask-session werkzeug pydantic flask-sqlalchemy`
 
 - Verifica se **Flask** funziona correttamente tramite l'interprete Python:
 
