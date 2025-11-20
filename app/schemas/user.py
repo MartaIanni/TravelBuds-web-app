@@ -1,4 +1,5 @@
 from pydantic import BaseModel, ConfigDict, field_validator
+from typing import Optional
 
 from app.domain.types import StrictBool, DateStr
 
@@ -15,7 +16,7 @@ class UserBase(BaseModel):
     password: str
     birthdate: DateStr
     gender: str
-    is_coordinator: StrictBool
+    is_coordinator: Optional[StrictBool] = False
 
     @field_validator("name", mode="after")
     @classmethod

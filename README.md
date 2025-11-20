@@ -34,7 +34,7 @@ PW: giulio_gorcia
 
 - **Avvio** del server:
 
-  `flask run`
+  `python main_app.py`
 
 ## Stop
 

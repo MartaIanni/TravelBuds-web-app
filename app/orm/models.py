@@ -1,6 +1,8 @@
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from sqlalchemy import String, Integer, Boolean, ForeignKey, Text
-
+from app.db.db import db
+from datetime import datetime
+from sqlalchemy import event
 
 # Base per tutti da cui ereditare tutti i modelli ORM
 class Base(DeclarativeBase):
@@ -53,7 +55,7 @@ class TripORM(Base):
     start: Mapped[str] = mapped_column(String(10), nullable=False)  # formato dd/mm/yyyy
     end: Mapped[str] = mapped_column(String(10), nullable=False)  # formato dd/mm/yyyy  
     max_seats: Mapped[int] = mapped_column(Integer, default=10)
-    seats: Mapped[int] = mapped_column(Integer, default=0)
+    free_seats: Mapped[int] = mapped_column(Integer, default=0)
     transport_price: Mapped[int] = mapped_column(Integer, default=0)
     stay_price: Mapped[int] = mapped_column(Integer, default=0)
     act_price: Mapped[int] = mapped_column(Integer, default=0)
@@ -62,6 +64,9 @@ class TripORM(Base):
     is_published: Mapped[bool] = mapped_column(Boolean, default=False)
     #ForeignKey verso il coordinatore
     coord_id: Mapped[int | None] = mapped_column( ForeignKey("users.uid"), nullable=True)
+
+    price: Mapped[int] = mapped_column(Integer, default=0)
+    nights: Mapped[int] = mapped_column(Integer, default=0)
 
     #Riempito da coordinated_trips in UserORM
     coordinator: Mapped["UserORM"] = relationship(
@@ -74,6 +79,42 @@ class TripORM(Base):
         back_populates="trip",
         foreign_keys="BookingORM.trip_id"
     )
+
+    quests: Mapped[list["QuestORM"]] = relationship(
+        back_populates="trip",
+        foreign_keys="QuestORM.trip_id"
+    )
+
+    #Ottengo la lista user partecipanti al viaggio
+    @property
+    def participants(self):
+        return [booking.user for booking in self.bookings]
+
+#Calcola price e nights prima dell'inserimento nuovo viaggio
+@event.listens_for(TripORM, "before_insert")
+def calculate_trip_fields(mapper, connection, target: TripORM):
+    target.price = (
+        target.transport_price +
+        target.stay_price +
+        target.act_price
+    )
+
+    start_date = datetime.strptime(target.start, "%d/%m/%Y")
+    end_date = datetime.strptime(target.end, "%d/%m/%Y")
+    target.nights = (end_date - start_date).days
+
+#Ricalcola price e nights quando si aggiorna la bozza
+@event.listens_for(TripORM, "before_update")
+def calculate_trip_fields_update(mapper, connection, target: TripORM):
+    target.price = (
+        target.transport_price +
+        target.stay_price +
+        target.act_price
+    )
+
+    start_date = datetime.strptime(target.start, "%d/%m/%Y")
+    end_date = datetime.strptime(target.end, "%d/%m/%Y")
+    target.nights = (end_date - start_date).days
 
 class QuestORM(Base):
     __tablename__ = "quests"
@@ -97,6 +138,13 @@ class QuestORM(Base):
     coord: Mapped["UserORM"] = relationship(
         back_populates="quests_from",
         foreign_keys=[coord_id]
+    )
+
+    trip_id: Mapped[int] = mapped_column(Integer, ForeignKey("trips.tid"), nullable=False)
+
+    trip: Mapped["TripORM"] = relationship(
+        back_populates="quests",
+        foreign_keys=[trip_id]
     )
 
 class BookingORM(Base):

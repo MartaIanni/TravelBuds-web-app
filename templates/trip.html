@@ -1,4 +1,4 @@
-{% if current_user.admin == 0 %}
+{% if not current_user.is_coordinator %}
 {% extends "base.html" %}
 {% block title %}{{ trip.destination }}{% endblock %}
 {% block content %}
@@ -63,7 +63,7 @@
             <p id="title">{{trip.destination}}</p>
             <p id="subtitle">{{trip.subtitle}}</p>
           </div>
-          <img id="trip_img" src="{{trip.bg_img}}" class="card-img-top" alt="trip_img">
+          <img id="trip_img" src="{{trip.bg_img_path}}" class="card-img-top" alt="trip_img">
 
           <div id="trip_details_sign">Scopri i dettagli👇</div>
 
@@ -127,16 +127,17 @@
                             </div>
                             <div class="modal-body">
                                 <form id="quest_form" action="/questbox" method="POST">
-                                    <div class="mb-3">
-                                        <input id="quest_username" name="u_username" class="form-control" type="text"
+                                    <!-- <div class="mb-3">
+                                        <input id="quest_username" name="user_id" class="form-control" type="text"
                                             placeholder="Username" required>
-                                    </div>
+                                    </div> -->
                                     <div class="mb-3">
-                                        <textarea id="quest_text" name="quest" class="form-control" placeholder="Scrivi qui la tua domanda"
+                                        <textarea id="quest_text" name="content" class="form-control" placeholder="Scrivi qui la tua domanda"
                                             required></textarea>
-                                        <input type="hidden" name="trip_destination" value="{{ trip.destination }}">
-                                        <input type="hidden" name="tripcode" value="{{ trip.tripcode }}">
-                                        <input type="hidden" name="a_username" value="{{ trip.a_username }}">
+                                        <input type="hidden" name="destination" value="{{ trip.destination }}">
+                                        <input type="hidden" name="trip_id" value="{{ trip.tid }}">
+                                        <input type="hidden" name="coord_id" value="{{ trip.coord_id }}">
+                                        <input type="hidden" name="username" value="{{ current_user.username }}">
                                     </div>
                                     <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                                         <button id="submit_quest_btn" type="submit" class="btn btn-primary">Invia</button>
@@ -168,10 +169,10 @@
                   Conferma la tua prenotazione e potrai vederne i dettagli sul tuo profilo!
                   <br>Si parte!</p>
                 <form id="booking_form" action="/booking" method="POST">
-                  <input type="hidden" name="u_username" value="{{ current_user.username }}">
-                  <input type="hidden" name="tripcode" value="{{ trip.tripcode }}">
+                  <input type="hidden" name="username" value="{{ current_user.username }}">
+                  <input type="hidden" name="tid" value="{{ trip.tid }}">
                   <input type="hidden" name="destination" value="{{ trip.destination }}">
-                  <input type="hidden" name="card_img" value="{{ trip.card_img }}">
+                  <input type="hidden" name="card_img_path" value="{{ trip.card_img_path }}">
                   <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                       <button id="submit_quest_btn" type="submit" class="btn btn-primary">Conferma</button>
                   </div>

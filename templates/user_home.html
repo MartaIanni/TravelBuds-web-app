@@ -1,4 +1,4 @@
-{% if current_user.admin == 0 %}
+{% if not current_user.is_coordinator %}
 {% extends "base.html" %}
 {% block title %}{{ current_user.name }}{% endblock %}
 {% block content %}
@@ -60,8 +60,8 @@
           <div id="available_cards">
 
             {% for t in trips %}
-            <a href="{{ url_for('trip', id=t.tripcode) }}" class="av_card_container">
-              <img src="{{t.card_img}}" class="av_img" alt="{{t.destination}}">
+            <a href="{{ url_for('trip', id=t.tid) }}" class="av_card_container">
+              <img src="{{t.card_img_path}}" class="av_img" alt="{{t.destination}}">
               <div class="av_card_body">
                 <h4 class="av_card_title">{{t.destination}}</h4>
                 <h6 class="av_card_subtitle">{{t.nights}} notti</h6>

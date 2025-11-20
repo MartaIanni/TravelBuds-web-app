@@ -1,8 +1,9 @@
 from typing import Annotated
-from pydantic import StringConstraints, Strict, Ge
+from pydantic import StringConstraints, Strict
+import re
 
-
-DateStr = Annotated[str, StringConstraints(pattern=[r'^\d{2}/\d{2}/\d{4}$'])]
+                    
+DateStr = Annotated[str, StringConstraints(pattern=r'^\d{2}/\d{2}/\d{4}$')]
 StrictBool = Annotated[bool, Strict()]
-#Stringa con sole lettere e spazi in mezzo
-StrictLiteral = Annotated[str, StringConstraints(pattern=[r'^[a-zA-Z ]+$'])]
+# Stringa con sole lettere e spazi in mezzo
+StrictLiteral = Annotated[str, StringConstraints(pattern=r'^[a-zA-Z ]+$')]

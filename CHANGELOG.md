@@ -4,21 +4,21 @@
 
 > Bug conosciuti:
 >
-> - Il pulsante “Rispondi” del coordinatore blocca la pagina dopo l’invio della domanda.
+> - Il pulsante “Rispondi” del coordinatore blocca la pagina dopo l’invio della domanda. (RISOLTO)
 
 ### 🔧 Aggiunto
 
 - File CHANGELOG.md per tracciare le modifiche future.
 - Inserimento dei file immagini, del db e della variabile d’ambiente per SECRET_KEY.
 - Dependencies: inserimento di .gitignore e requirements.txt.
-- Pydantic: inserimento di validation.py
-- SQLAlchemy: package app/ con suddivisione nei packages domain/, orm/ e schemas/.
+- Pydantic: inserimento di validations.py
+- SQLAlchemy: package app/ con suddivisione nei packages domain/, orm/ e schemas/. File see_bd.py per generazione db iniziale.
 
 ### 🧩 Modificato
 
 - Pulizia della struttura del progetto.
 - Pydantic: costruzione dei modelli (models.py) e separazione delle validazioni (validation.py) senza l'utilizzo di ORM (SQLAlchemy)
-- SQLAlchemy: completamento dei file in app/domain, app/orm (models.py testato), app/schemas orm/models.py.
+- SQLAlchemy: conversione con i modelli ORM dei file in app/domain, app/orm, app/schemas, dei templates/ e di main_app.py.
 
 ### 🗑️ Rimosso
 

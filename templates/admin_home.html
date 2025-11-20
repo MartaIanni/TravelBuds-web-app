@@ -1,4 +1,4 @@
-{% if current_user.admin == 1 %}
+{% if current_user.is_coordinator %}
 {% extends "base.html" %}
 {% block title %}{{ current_user.name }}{% endblock %}
 {% block content %}
@@ -116,7 +116,7 @@
                             </div>
                           </div>
 
-                        <input id="seats_new" name="seats" class="form-control" type="number"
+                        <input id="seats_new" name="max_seats" class="form-control" type="number"
                           placeholder="Numero di posti" min="1" required>
 
                         <textarea id="description_new" name="description" class="form-control"
@@ -134,25 +134,20 @@
                         <input id="subtitle_new" name="subtitle" class="form-control"
                           type="text" placeholder="Sottotitolo">
 
-                        <input id="total_price_new" name="price" class="form-control" type="number"
-                        placeholder="Prezzo totale" min="0">
-
                         <textarea id="tour_new" name="tour" class="form-control"
                           rows="3" placeholder="Itinerario delle giornate"></textarea>
 
-                        <input type="hidden" name="public" value="0">
                         <input type="hidden" name="free_seats" value="0">
 
                         <div id="imgs_input">
-                          <label for="card_img" class="form-label">Foto di presentazione</label>
-                          <input type="file" id="card_img" name="card_img" class="form-control">
+                          <label for="card_img_path" class="form-label">Foto di presentazione</label>
+                          <input type="file" id="card_img_path" name="card_img_path" class="form-control">
 
-                          <label for="bg_img" class="form-label">Foto di sfondo</label>
-                          <input type="file" id="bg_img" name="bg_img" class="form-control">
+                          <label for="bg_img_path" class="form-label">Foto di sfondo</label>
+                          <input type="file" id="bg_img_path" name="bg_img_path" class="form-control">
                         </div>
                         <br>
-                        <input type="hidden" name="nights" value="0">
-                        <input type="hidden" name="a_username" value="{{ current_user.username }}">
+                        <input type="hidden" name="coord_id" value="{{ current_user.username }}">
 
 
                         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
@@ -171,18 +166,18 @@
 
                 {% for d in d_trips %}
                 <div id="draft_trip" class="card">
-                  <img src="{{ d.card_img }}" class="draft_img" alt="{{ d.destination }}">
+                  <img src="{{ d.card_img_path }}" class="draft_img" alt="{{ d.destination }}">
                   <div class="draft_card_body">
                     <h4 class="draft_card_title">{{ d.destination }}</h4>
                     <button id="modify_btn" type="button" class="btn"
-                    data-bs-toggle="modal" data-bs-target="#modifyModal{{ d.tripcode }}">Modifica</button>
+                    data-bs-toggle="modal" data-bs-target="#modifyModal{{ d.tid }}">Modifica</button>
                     <button id="delete_btn" type="button" class="btn"
-                    data-bs-toggle="modal" data-bs-target="#deleteModal{{ d.tripcode }}">Elimina</button>
+                    data-bs-toggle="modal" data-bs-target="#deleteModal{{ d.tid }}">Elimina</button>
                   </div>
 
 
                   <!--modale per la MODIFICA-->
-                  <div class="modal fade" id="modifyModal{{ d.tripcode }}" tabindex="-1"
+                  <div class="modal fade" id="modifyModal{{ d.tid }}" tabindex="-1"
                        aria-labelledby="modifyModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-lg">
                       <div class="modal-content">
@@ -215,9 +210,9 @@
                               </div><br>
 
                               <div>
-                                <label for="seats" class="form-label">Numero di posti : </label>
-                                <input id="seats_input" name="seats" type="number"
-                                  value="{{ d.seats }}" min="1" required><br>
+                                <label for="max_seats" class="form-label">Numero di posti : </label>
+                                <input id="seats_input" name="max_seats" type="number"
+                                  value="{{ d.max_seats }}" min="1" required><br>
                               </div>
 
                               <div>
@@ -236,11 +231,6 @@
 
                               <div id="price_new">
                                 <div>
-                                  <label for="price" class="form-label">Prezzo totale</label><br>
-                                  <input id="price_input" name="price" type="number"
-                                    value="{{ d.price if d.price else '' }}" min="0"><br>
-                                </div>
-                                <div>
                                   <label for="stay_price" class="form-label">Prezzo alloggio</label><br>
                                   <input id="stay_price_new" name="stay_price" type="number"
                                     value="{{ d.stay_price if d.stay_price else '' }}" min="0"><br>
@@ -257,21 +247,22 @@
                                 </div>
                               </div>
 
-                              {% if not d.card_img %}
-                                <label for="imgInput" class="form-label">Foto di presentazione</label>
-                                <input type="file" id="imgInput" name="card_img" class="form-control"><br>
-                              {% else %}
-                                <input type="hidden" name="card_img" value="{{ d.card_img }}">
-                              {% endif %}
-                              {% if not d.bg_img %}
-                                <label for="imgInput" class="form-label">Foto di sfondo</label>
-                                <input type="file" id="imgInput" name="bg_img" class="form-control"><br>
-                              {% else %}
-                                <input type="hidden" name="bg_img" value="{{ d.bg_img }}">
+                              <label for="card_img_path" class="form-label">Foto di presentazione</label>
+                              <input type="file" id="card_img_path" name="card_img_path" class="form-control">
+                              {% if d.card_img_path %}
+                                <small>Immagine attuale: <a href="{{ d.card_img_path }}" target="_blank">Visualizza</a></small>
+                                <input type="hidden" name="old_card_img_path" value="{{ d.card_img_path }}">
                               {% endif %}
 
-                              <input type="hidden" name="tripcode" value="{{ d.tripcode }}">
-                              <input type="hidden" name="a_username" value="{{ current_user.username }}">
+                              <label for="bg_img_path" class="form-label">Foto di sfondo</label>
+                              <input type="file" id="bg_img_path" name="bg_img_path" class="form-control">
+                              {% if d.bg_img_path %}
+                                <small>Immagine attuale: <a href="{{ d.bg_img_path }}" target="_blank">Visualizza</a></small>
+                                <input type="hidden" name="old_bg_img_path" value="{{ d.bg_img_path }}">
+                              {% endif %}
+
+                              <input type="hidden" name="tid" value="{{ d.tid }}">
+                              <input type="hidden" name="coord_id" value="{{ current_user.username }}">
 
                               <div class="d-grid gap-2 d-md-flex justify-content-md-end">
 	 	                            <button id="submit_post_btn" type="submit" class="btn btn-primary" name="action" value="post">Pubblica</button>
@@ -286,7 +277,7 @@
                   </div>
 
                   <!--modale per ELIMINAZIONE-->
-                  <div class="modal fade" id="deleteModal{{ d.tripcode }}" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                  <div class="modal fade" id="deleteModal{{ d.tid }}" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered">
                       <div class="modal-content">
                         <div class="modal-header">
@@ -301,7 +292,7 @@
                             <p>Questa azione è irreversibile.</p>
 
                             <input type="hidden" name="username" value="{{ current_user.username }}">
-                            <input type="hidden" name="tripcode" value="{{ d.tripcode }}">
+                            <input type="hidden" name="tid" value="{{ d.tid }}">
 
                             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
 	 	                          <button id="submit_delete_btn" type="submit" class="btn btn-primary">Conferma</button>
@@ -327,15 +318,15 @@
               <div id="mytrips_cards">
                 {% for p in p_trips %}
                 <div id="public_trip" class="card">
-                  <img src="{{p.card_img}}" class="public_img" alt="{{p.destination}}">
+                  <img src="{{p.card_img_path}}" class="public_img" alt="{{p.destination}}">
                   <div class="public_card_body">
                     <h4 class="public_card_title">{{p.destination}}</h4>
                     <button id="read_btn" type="button" class="btn"
-                    data-bs-toggle="modal" data-bs-target="#readModal{{p.tripcode}}">Visualizza</button>
+                    data-bs-toggle="modal" data-bs-target="#readModal{{p.tid}}">Visualizza</button>
                   </div>
 
                   <!--modale per la VISUALIZZAZIONE VIAGGIO-->
-                  <div class="modal fade" id="readModal{{p.tripcode}}" tabindex="-1"
+                  <div class="modal fade" id="readModal{{p.tid}}" tabindex="-1"
                     aria-labelledby="readModalLabel"
                     aria-hidden="true">
                     <div class="modal-dialog modal-lg">
@@ -350,16 +341,15 @@
                           <p>Destinazione: {{ p.destination }}, {{ p.subtitle }}</p><br>
                           <p>Partenza: {{ p.start }}</p><br>
                           <p>Ritorno: {{ p.end }}</p><br>
-                          <p>Posti prenotati: {{ p.seats - p.free_seats }}</p><br>
+                          <p>Posti prenotati: {{ p.max_seats - p.free_seats }}</p><br>
                           <p>Elenco partecipanti:</p>
                           <ul>
-                            {% for username in p.participants %}
-                              <li>{{ username }}</li>
+                            {% for user in p.participants %}
+                              <li>{{ user.username }}</li>
                             {% endfor %}
                           </ul><br>
                           <p>Descrizione: {{ p.description }}</p><br>
                           <p>Itinerario: {{ p.tour }}</p><br>
-                          <p>Prezzo: {{ p.price }}€</p><br>
                           <p>Alloggio: {{ p.stay_price }}€</p><br>
                           <p>Trasporti: {{ p.transport_price }}€</p><br>
                           <p>Attivit&agrave;: {{ p.act_price }}€</p><br>
@@ -382,6 +372,7 @@
             <div id="quest_cards">
 
               {% for q in quests %}
+              {% if not q.answer %}
               <div id="quest_trip" class="card">
                 <div class="quest_card_body">
                   <div class="accordion accordion-flush" id="accordion_messages">
@@ -390,19 +381,20 @@
                         <button class="accordion-button collapsed" type="button"
                             data-bs-toggle="collapse" data-bs-target="#flush-collapse-{{ loop.index }}"
                             aria-expanded="false" aria-controls="flush-collapse-{{ loop.index }}">
-                            Chat con {{q.u_username}} (<strong>{{q.destination}}</strong>)
+                            Chat con {{q.user.username}} (<strong>{{q.destination}}</strong>)
                         </button>
                       </h2>
                       <div id="flush-collapse-{{ loop.index }}" class="accordion-collapse collapse"
                             data-bs-parent="#accordionFlushExample">
                         <div class="accordion-body">
-                          <p><strong>La domanda di {{q.u_username}}:</strong></p>
-                          <p class="ms-3">{{ q.quest }}</p>
-                          <div id="mex_card_btn">
-                            <button id="answer_btn" type="button"
-                              class="btn" data-bs-toggle="modal"
-                              data-bs-target="#answerModal">Rispondi</button>
-                          </div>
+                          <p><strong>La domanda di {{q.user.username}}:</strong></p>
+                          <p class="ms-3">{{ q.content }}</p>
+                          
+                            <div id="mex_card_btn">
+                              <button id="answer_btn" type="button"
+                                class="btn" data-bs-toggle="modal"
+                                data-bs-target="#answerModal">Rispondi</button>
+                            </div>
 
                           <!--modale per RISPONDERE-->
                           <div class="modal fade" id="answerModal" tabindex="-1"
@@ -411,7 +403,7 @@
                               <div class="modal-content">
                                 <div class="modal-header">
                                   <h1 class="modal-title fs-5" id="answer_title">
-                                      Risposta a {{q.u_username}}</h1>
+                                      Risposta a {{q.user.username}}</h1>
                                   <button type="button" class="btn-close"
                                         data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
@@ -419,12 +411,12 @@
                                   <form id="answer_form" action="/admin_answer_validation" method="POST">
                                     <div id="answer_form_header" class="mb-3">
 
-                                      <p>{{q.quest}}</p>
+                                      <p>{{q.content}}</p>
                                       <textarea id="admin_answer" name="answer" class="form-control mb-3" rows="3"
                                           placeholder="La tua risposta"></textarea>
-                                      <input type="hidden" name="questid" value="{{q.questid}}">
+                                      <input type="hidden" name="quest_id" value="{{q.qid}}">
                                       <input type="hidden" name="username" value="{{current_user.username}}">
-
+                                      
                                       <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                                         <button id="submit_answer_btn" type="submit" class="btn btn-primary">
                                           Rispondi
@@ -442,6 +434,7 @@
                   </div>
                 </div>
               </div>
+              {% endif %}
               {% endfor %}
             </div>
           </div>
