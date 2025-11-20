@@ -66,10 +66,8 @@ def validate_and_save_trip(form_data):
         trip_id = form_data.get('tid')
         if not trip_id:
           check_trip = TripCreate(**form_data)
-          new_trip = check_trip.model_dump()
-          # print("DEBUG new_trip:", new_trip)   
+          new_trip = check_trip.model_dump() 
           created_trip = TripsDAO.add_trip(new_trip)
-          # print("DEBUG created_trip:", created_trip)
           if not created_trip:
             flash("Errore nella creazione del viaggio.")
             return False
@@ -108,6 +106,12 @@ def save_uploaded_images(form_data, card, bg, old_card=None , old_bg=None ):
     else:
         form_data['bg_img_path'] = old_bg or ''
     return form_data
+
+def clean_numeric_fields(data: dict, numeric_fields: list):
+    for field in numeric_fields:
+        if data.get(field) == "":
+            data[field] = None
+    return data
 
 @app.route('/')
 def home():
@@ -210,6 +214,9 @@ def draft_validation():
     #Controllo se esistono immagini card e bg, salvataggio in /static e modifica path per memorizzarlo sul db:
     form_data_draft = save_uploaded_images(form_data_draft, card, bg, old_card, old_bg)
 
+    form_data_draft['transport_price'] = int(form_data_draft.get('transport_price') or 0)
+    form_data_draft['stay_price'] = int(form_data_draft.get('stay_price') or 0)
+    form_data_draft['act_price'] = int(form_data_draft.get('act_price') or 0)
     form_data_draft['start'] = datetime.strptime(form_data_draft['start'], "%Y-%m-%d").strftime("%d/%m/%Y")
     form_data_draft['end'] = datetime.strptime(form_data_draft['end'], "%Y-%m-%d").strftime("%d/%m/%Y")
     
@@ -310,14 +317,12 @@ def booking():
 
   free_seats = trip.free_seats - 1
   seats=TripsDAO.update_seats(trip.tid, free_seats)
-  print(seats)
   book_load = {
      'user_id': user_id,
      'trip_id': trip.tid,
      'card_img_path': book_data.get('card_img_path', '')
   }
   res=BookingsDAO.add_booking(book_load)
-  print(res)
 
   if res and seats :
     flash("Prenotazione completata con successo!")
