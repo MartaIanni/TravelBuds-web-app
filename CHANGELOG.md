@@ -13,6 +13,7 @@
 - Dependencies: inserimento di .gitignore e requirements.txt.
 - Pydantic: inserimento di validations.py
 - SQLAlchemy: package app/ con suddivisione nei packages domain/, orm/ e schemas/. File see_bd.py per generazione db iniziale.
+- Docker: Dockerfile e docker-compose.yaml per creazione image per development
 
 ### 🧩 Modificato
 
