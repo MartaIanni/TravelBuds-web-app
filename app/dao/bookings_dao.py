@@ -1,4 +1,4 @@
-from app.db.db import db
+from db.db import db
 from app.schemas.booking import BookingCreate
 from app.orm.models import BookingORM, UserORM
 

@@ -1,5 +1,5 @@
 from app.orm.models import UserORM, QuestORM
-from app.db.db import db
+from db.db import db
 from app.schemas.quest import QuestCreate
 
 class QuestsDAO:

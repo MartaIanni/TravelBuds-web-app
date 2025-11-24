@@ -1,0 +1,11 @@
+services:
+  web:
+    build: .
+    container_name: travelbuds_app
+    ports:
+      - "5001:5000"
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+    command: nodemon --exec python main_app.py

@@ -15,7 +15,6 @@ import os
 from app.orm.models import UserORM, TripORM, BookingORM, QuestORM, Base
 from app.schemas.trip import TripUpdate, TripCreate
 from app.schemas.user import UserCreate
-from app.domain.validations import validate_password
 
 #DAO import:
 from app.dao.trips_dao import TripsDAO
@@ -24,7 +23,7 @@ from app.dao.quests_dao import QuestsDAO
 from app.dao.bookings_dao import BookingsDAO
 
 #SQLAlchemy
-from app.db.db import db 
+from db.db import db 
 
 app = Flask(__name__)
 
@@ -35,6 +34,7 @@ app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 #URI corretta per SQLite
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
 
 #Inizializzazione SQLAlchemy con l'app Flask (collega db all'app Flask)
 db.init_app(app)
@@ -460,4 +460,5 @@ def logout():
     return redirect(url_for('home'))
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    # app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000)

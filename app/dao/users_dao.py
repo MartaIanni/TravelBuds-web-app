@@ -1,5 +1,5 @@
 from app.orm.models import UserORM
-from app.db.db import db
+from db.db import db
 from app.schemas.user import UserCreate #Per usare Pydantic per la validazione
 
 class UsersDAO:

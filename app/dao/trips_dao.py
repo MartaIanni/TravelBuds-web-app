@@ -1,5 +1,5 @@
 from app.orm.models import TripORM, BookingORM
-from app.db.db import db
+from db.db import db
 from app.schemas.trip import TripCreate, TripUpdate #Per usare Pydantic per la validazione
 
 class TripsDAO:
