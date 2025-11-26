@@ -13,13 +13,15 @@
 - Dependencies: inserimento di .gitignore e requirements.txt.
 - Pydantic: inserimento di validations.py
 - SQLAlchemy: package app/ con suddivisione nei packages domain/, orm/ e schemas/. File see_bd.py per generazione db iniziale.
-- Docker: Dockerfile e docker-compose.yaml per creazione image per development
+- Docker: Dockerfile e docker-compose.yaml per creazione image per development.
+- JWT Authentication: implementazione autenticazione lato client (main_app.py).
 
 ### 🧩 Modificato
 
 - Pulizia della struttura del progetto.
 - Pydantic: costruzione dei modelli (models.py) e separazione delle validazioni (validation.py) senza l'utilizzo di ORM (SQLAlchemy)
 - SQLAlchemy: conversione con i modelli ORM dei file in app/domain, app/orm, app/schemas, dei templates/ e di main_app.py.
+- JWT Authentication: modifica di main_app.py per implementare autenticazione con token lato client.
 
 ### 🗑️ Rimosso
 

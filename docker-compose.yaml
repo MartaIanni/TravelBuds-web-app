@@ -8,4 +8,5 @@ services:
       - .env
     volumes:
       - .:/app
+      - ./db:/app/db
     command: nodemon --exec python main_app.py

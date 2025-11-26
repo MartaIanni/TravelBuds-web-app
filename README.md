@@ -36,6 +36,10 @@ PW: giulio_gorcia
 
   `python main_app.py`
 
+- **Avvio** del server con Nodemon:
+
+  `nodemon --exec python main_app.py`
+
 ## Stop
 
 - Fermare l'esecuzione del server:

@@ -17,7 +17,7 @@ title %}{{ current_user.name }}{% endblock %} {% block content %}
         <a
           id="home_btn"
           class="link-offset-2 link-underline link-underline-opacity-0"
-          href="{{ url_for('user_home', username=current_user.username) }}"
+          href="{{ url_for('user_home') }}"
           >Home</a
         >
       </p>
