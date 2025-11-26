@@ -17,9 +17,9 @@ PW: giulio_gorcia
 
   `. venv/bin/activate`
 
-- Installare le **dipendenze**:
+- Installare le **dipendenze** contenute in requirements.txt:
 
-  `pip install flask flask-login flask-session werkzeug pydantic flask-sqlalchemy`
+  `pip install flask flask-login flask-session werkzeug pydantic flask-sqlalchemy flask-jwt-extended python-dotenv`
 
 - Verifica se **Flask** funziona correttamente tramite l'interprete Python:
 
