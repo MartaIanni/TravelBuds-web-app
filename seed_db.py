@@ -1,5 +1,5 @@
 from main_app import app, db
-from app.orm.models import UserORM, TripORM
+from backend.orm.models import UserORM, TripORM
 from werkzeug.security import generate_password_hash
 
 users_data = [

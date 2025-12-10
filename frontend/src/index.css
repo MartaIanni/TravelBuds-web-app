@@ -1,0 +1,12 @@
+@import "tailwindcss";
+
+/* Forza Tailwind a generare le classi personalizzate */
+.font-nunito {
+  font-family: "Nunito", sans-serif;
+}
+.font-poppins {
+  font-family: "Poppins", sans-serif;
+}
+.font-quicksand {
+  font-family: "Quicksand", sans-serif;
+}
