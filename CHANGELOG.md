@@ -4,7 +4,7 @@
 
 > Bug conosciuti:
 >
-> - Il pulsante “Rispondi” del coordinatore blocca la pagina dopo l’invio della domanda. (RISOLTO)
+> - (RISOLTO) Il pulsante “Rispondi” del coordinatore blocca la pagina dopo l’invio della domanda.
 
 ### 🔧 Aggiunto
 
@@ -22,6 +22,7 @@
 - Pydantic: costruzione dei modelli (models.py) e separazione delle validazioni (validation.py) senza l'utilizzo di ORM (SQLAlchemy)
 - SQLAlchemy: conversione con i modelli ORM dei file in app/domain, app/orm, app/schemas, dei templates/ e di main_app.py.
 - JWT Authentication: modifica di main_app.py per implementare autenticazione con token lato client.
+- React + Tailwind: conversione del frontend dal rendering di template HTML a pagine con React e Tailwind.
 
 ### 🗑️ Rimosso
 
