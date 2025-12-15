@@ -3,6 +3,7 @@ import TripCard from "../components/TripCard";
 import NewTripForm from "../components/NewTripForm";
 import FlashMessages from "../components/FlashMessages";
 import { resStatus, getToken } from "../services/auth";
+import { useNavigate } from "react-router-dom";
 
 const CoordProfilePage = () => {
   const [p_trips, setPublicTrips] = useState([]);
@@ -15,6 +16,7 @@ const CoordProfilePage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [flashMessages, setFlashMessages] = useState([]);
+  const navigate = useNavigate();
 
   const token = getToken();
   if (!token) {

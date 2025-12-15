@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { decodeJwt } from "jose";
 import FlashMessages from "../components/FlashMessages";
 
@@ -100,14 +100,20 @@ function Login() {
           messages={flashMessages}
           onClose={() => setFlashMessages([])}
         />
-
         <div className="text-center bg-white/65 py-1">
           <p className="text-2xl text-teal-900">
             Vivi assieme a noi nuove avventure in giro per il mondo
           </p>
         </div>
 
-        <section className="mt-20 ml-50 w-96 bg-white p-6 rounded-2xl shadow-lg">
+        <section
+          className="
+    w-96 bg-white p-6 rounded-2xl shadow-lg
+    mt-10
+    mx-auto
+    md:mt-20 md:ml-50 md:mx-0
+  "
+        >
           {/* Form Login */}
           <form
             onSubmit={handleLoginSubmit}
@@ -151,7 +157,6 @@ function Login() {
             </button>
           </div>
         </section>
-
         {/* Modale Signup */}
         {showSignupModal && (
           <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/50">

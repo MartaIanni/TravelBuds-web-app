@@ -4,7 +4,7 @@
 
 > Bug conosciuti:
 >
-> - (RISOLTO) Il pulsante “Rispondi” del coordinatore blocca la pagina dopo l’invio della domanda.
+> - Il pulsante “Rispondi” del coordinatore blocca la pagina dopo l’invio della domanda. (RISOLTO)
 
 ### 🔧 Aggiunto
 

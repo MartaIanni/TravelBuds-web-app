@@ -7,6 +7,7 @@ const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [user, setUser] = useState(null);
+  const [isOpen, setIsOpen] = useState(false); // stato hamburger
 
   const hiddenPages = ["/login"];
   const hideBottomBar = hiddenPages.includes(location.pathname);
@@ -53,41 +54,91 @@ const Navbar = () => {
 
   return (
     <>
+      {/* TITLE */}
       <nav className="flex justify-center items-center font-quicksand bg-green-900 text-green-200 h-30">
         <h1 className="font-bold text-[80px] m-0 p-0">TravelBuds</h1>
       </nav>
 
       {!hideBottomBar && (
-        <div className="flex justify-between font-quicksand text-center bg-green-200 py-3 px-7 shadow-md">
-          <h4 className="text-xl font-bold">
-            {user
-              ? coordPages
-                ? `Ciao ${user.name}!`
-                : `Ciao ${user.name}! Noi siamo pronti a partire e tu?`
-              : "Caricamento..."}
-          </h4>
-          <div className="flex justify-center gap-10">
-            {coordPages ? (
-              <></>
-            ) : (
-              <>
-                <NavLink to="/trips" className={linkClass}>
-                  Viaggi
-                </NavLink>
+        <div className="font-quicksand bg-green-200 py-3 px-7 shadow-md">
+          {/* TOP BAR */}
+          <div className="flex justify-between items-center h-7 relative">
+            {/* MOBILE */}
+            <h4 className="text-xl font-bold md:hidden">
+              {user ? `Ciao ${user.name}!` : "Caricamento..."}
+            </h4>
 
-                <NavLink to="/user-profile" className={linkClass}>
-                  Il mio profilo
-                </NavLink>
-              </>
-            )}
+            {/* DESKTOP: frase estesa rispetto al ruolo user */}
+            <h4 className="text-xl font-bold hidden md:block">
+              {user
+                ? coordPages
+                  ? `Ciao ${user.name}!`
+                  : `Ciao ${user.name}! Noi siamo pronti a partire e tu?`
+                : "Caricamento..."}
+            </h4>
 
-            {/* Uguale per tutti, quindi resta fuori dal ternario */}
-            <NavLink
-              className="text-green-900 hover:underline"
-              onClick={logout}
+            {/* HAMBURGER MOBILE */}
+            <button
+              className="md:hidden text-green-900 text-3xl"
+              onClick={() => setIsOpen(!isOpen)}
             >
-              Logout
-            </NavLink>
+              ☰
+            </button>
+
+            {/* MENU DESKTOP */}
+            <div className="hidden md:flex gap-10">
+              {!coordPages && (
+                <>
+                  <NavLink to="/trips" className={linkClass}>
+                    Viaggi
+                  </NavLink>
+                  <NavLink to="/user-profile" className={linkClass}>
+                    Il mio profilo
+                  </NavLink>
+                </>
+              )}
+
+              <NavLink
+                className="text-green-900 hover:underline"
+                onClick={logout}
+              >
+                Logout
+              </NavLink>
+            </div>
+
+            {/* MENU MOBILE DROPDOWN */}
+            {isOpen && (
+              <div className="md:hidden absolute right-0 top-6 mt-2 w-48 bg-green-50 p-4 rounded-lg shadow-lg flex flex-col gap-3 z-50">
+                {!coordPages && (
+                  <>
+                    <NavLink
+                      to="/trips"
+                      className="text-green-900 font-semibold"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      Viaggi
+                    </NavLink>
+
+                    <NavLink
+                      to="/user-profile"
+                      className="text-green-900 font-semibold"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      Il mio profilo
+                    </NavLink>
+                  </>
+                )}
+                <button
+                  className="text-green-900 font-semibold text-left"
+                  onClick={() => {
+                    setIsOpen(false);
+                    logout();
+                  }}
+                >
+                  Logout
+                </button>
+              </div>
+            )}
           </div>
         </div>
       )}

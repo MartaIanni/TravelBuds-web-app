@@ -1,10 +1,12 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import useDateFormat from "../hooks/useDateFormat";
 import FlashMessages from "./FlashMessages";
 import { resStatus, getToken } from "../services/auth";
 
 export default function EditTripForm({ trip, onClose }) {
   const { toInputDate } = useDateFormat();
+  const navigate = useNavigate();
   const [form, setForm] = useState({
     tid: trip.tid,
     destination: trip.destination,
@@ -29,6 +31,10 @@ export default function EditTripForm({ trip, onClose }) {
   );
 
   const token = getToken();
+  if (!token) {
+    navigate("/login");
+    return;
+  }
   const [flashMessages, setFlashMessages] = useState([]);
 
   const handleChange = (e) => {

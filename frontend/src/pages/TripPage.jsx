@@ -13,6 +13,8 @@ export default function TripPage() {
 
   const [newQuest, setNewQuest] = useState("");
 
+  const [isMobile, setIsMobile] = useState(false);
+
   const [flashMessages, setFlashMessages] = useState([]);
   const token = getToken();
 
@@ -118,6 +120,17 @@ export default function TripPage() {
     }
   };
 
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 600); // md breakpoint
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   if (loading) return <p className="p-10 text-lg">Caricamento...</p>;
   if (!trip) return <p className="p-10 text-lg">Viaggio non trovato.</p>;
 
@@ -131,28 +144,40 @@ export default function TripPage() {
       <div className="relative">
         <img
           src={trip.bg_img_path}
-          className="w-full h-[600px] object-cover brightness-110"
+          className="w-full h-150 object-cover brightness-110"
         />
 
         {/* Titolo */}
-        <div className="absolute top-7 right-36 flex flex-col">
-          <p className="text-[40px] font-bold text-[#112142]">
+        <div
+          className={
+            isMobile
+              ? "absolute top-7 left-1/2 -translate-x-1/2 flex flex-col items-center text-center"
+              : "absolute top-7 right-10 flex flex-col"
+          }
+        >
+          <p className="text-[48px] font-bold text-[#112142]">
             {trip.destination}
           </p>
-          <p className="text-[40px] font-bold text-[#112651]">
+          <p className="text-[48px] font-bold text-[#112651] hidden lg:block">
             {trip.subtitle}
           </p>
         </div>
 
         {/* Card */}
-        <div className="absolute top-24 left-50 text-white bg-[#152c5b98] rounded-md w-80 h-65 p-6 text-center">
-          <p className="font-bold text-sm">
+        <div
+          className={
+            isMobile
+              ? "absolute top-35 left-1/2 -translate-x-1/2 flex flex-col items-center text-white bg-[#152c5b98] rounded-md w-100 h-80 p-6 text-center"
+              : "absolute top-35 left-35 text-white bg-[#152c5b98] rounded-md w-100 h-80 p-7 text-center"
+          }
+        >
+          <p className="font-bold text-md">
             {trip.start} ∙ {trip.end}
           </p>
-          <p className="font-bold text-xs mb-5">({trip.nights} notti)</p>
-          <p className="font-bold text-xl">A soli</p>
-          <p className="text-4xl font-bold mb-4">{trip.price}€</p>
-          <p className="font-bold text-xs mb-4">
+          <p className="font-bold text-sm mb-5">({trip.nights} notti)</p>
+          <p className="font-bold text-2xl">A soli</p>
+          <p className="text-[50px] font-bold mb-4">{trip.price}€</p>
+          <p className="font-bold text-sm mb-4">
             {trip.free_seats} posti disponibili
           </p>
 
@@ -170,9 +195,9 @@ export default function TripPage() {
       </div>
 
       {/* Dettaglio + Aside */}
-      <div className="flex justify-between gap-6 px-10 py-10">
+      <div className="flex flex-col md:flex-row justify-between gap-6 px-10 py-10">
         {/* Descrizione */}
-        <div className="w-220">
+        <div className="w-full">
           <div className="bg-[#f8f9fa] text-[#113f72] rounded-xl p-8">
             <h2 className="text-green-700 text-2xl font-bold text-center mb-4">
               {trip.destination} da scoprire
@@ -189,7 +214,13 @@ export default function TripPage() {
         </div>
 
         {/* Aside */}
-        <div className="flex flex-col gap-6 w-88">
+        <div
+          className={
+            isMobile
+              ? "flex flex-col gap-6 items-center w-full"
+              : "flex flex-col gap-6 w-88"
+          }
+        >
           <div className="bg-[#f8f9fa] text-[#113f72] rounded-xl p-6">
             <h4 className="text-center text-2xl text-green-700 font-bold mb-4">
               Cosa è incluso
